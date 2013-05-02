@@ -54,7 +54,7 @@ At this point, we can begin communicating normally.
 ### Vehicle Data Queries
 
 To request data from the vehicle's systems, we send it a byte string according
-to the OBD standard. More information may be found on [Wikipedia](https://en.wikipedia.org/wiki/OBD-II_PIDs "OBD-II PIDs - Wikipedia, the free encyclopedia")
+to the OBD standard. More information may be found on [Wikipedia](https://en.wikipedia.org/wiki/OBD-II_PIDs "OBD-II PIDs - Wikipedia, the free encyclopedia").
 
 Commands take the form of:
 
