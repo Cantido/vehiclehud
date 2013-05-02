@@ -78,7 +78,7 @@ int serial_connect() {
     }
     
     obdcfg.c_iflag |= ( ICRNL );  // Translate CR to NL on input
-    obdcfg.c_oflag |= ();
+    //obdcfg.c_oflag |= ();
     obdcfg.c_cflag |= ( CS8 );    // Character size: 8 bits
     
     if(cfsetispeed(&obdcfg, BAUDRATE) < 0 || cfsetospeed(&obdcfg, BAUDRATE) < 0) {
