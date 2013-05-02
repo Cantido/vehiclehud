@@ -47,7 +47,8 @@ int main(int argc, char** argv) {
      */
     
     if((obd_fd = open(PORTNAME, obd_fd, O_RDWR | O_NOCTTY | O_NDELAY )) < 0 || !isatty(obd_fd)) {
-        perror("Error opening serial file IO");
+        fprintf(stderr, "[%s]: Error opening serial port at %s: ", argv[0], PORTNAME);
+        perror("");
         exit(EXIT_FAILURE);
     }
     
@@ -56,11 +57,14 @@ int main(int argc, char** argv) {
     obdcfg.c_cflag |= ( CS8 );
     
     if(cfsetispeed(&obdcfg, BAUDRATE) < 0 || cfsetospeed(&obdcfg, BAUDRATE) < 0) {
-        perror("Error setting baud rate");
+        fprintf(stderr, "[%s]: Error setting baud rate at %s: ", argv[0], PORTNAME);
+        perror("");
         exit(EXIT_FAILURE);
     }
     
     if(tcsetattr(obd_fd, TCSANOW, &obdcfg) < 0) {
+        fprintf(stderr, "[%s]: Error setting serial attributes for %s: ", argv[0], PORTNAME);
+        perror("");
         perror("Error setting serial attributes");
         exit(EXIT_FAILURE);
     }
