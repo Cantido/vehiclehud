@@ -64,7 +64,7 @@ int serial_connect() {
         sprintf(portname, "%sS%d", TTYPREFIX, i);
         printf("...Trying %s...", portname);
         fflush(stdout);
-        if((obd_fd = open(portname, obd_fd, O_RDWR | O_NOCTTY | O_NDELAY )) < 0 || !isatty(obd_fd)) {
+        if((obd_fd = open(portname, obd_fd, O_RDWR | O_NOCTTY )) < 0 || !isatty(obd_fd)) {
             perror("Failure");
         } else {
             printf("Success!\n");
