@@ -77,9 +77,9 @@ int serial_connect() {
         exit(EXIT_FAILURE);
     }
     
-    obdcfg.c_iflag |= ( ICRNL );
-    obdcfg.c_oflag |= ( ONLRET );
-    obdcfg.c_cflag |= ( CS8 );
+    obdcfg.c_iflag |= ( ICRNL );  // Translate CR to NL on input
+    obdcfg.c_oflag |= ( ONLCR );  // Map NL to CR-NL on output
+    obdcfg.c_cflag |= ( CS8 );    // Character size: 8 bits
     
     if(cfsetispeed(&obdcfg, BAUDRATE) < 0 || cfsetospeed(&obdcfg, BAUDRATE) < 0) {
         perror("Error setting baud rate");
