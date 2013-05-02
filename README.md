@@ -37,7 +37,7 @@ Interpreter. The serial requirements for the device are as follows:
 * Data bits: `8`
 * Parity: `None`
 * Stop bits: `1`
-* Line end: Carriage return (`'\\r'` or `0x0D`) (input and output)
+* Line end: Carriage return (`'\r'` or `0x0D`) (input and output)
 
 A majority of messages will be less than 7 data bytes long. We must send a
 a signal of `ATAL` to allow longer messages.
