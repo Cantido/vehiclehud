@@ -24,17 +24,19 @@
 #include <fcntl.h>
 #include <stdlib.h>
 
-#define PORTNAME "/dev/ttyS0"
-#define BAUDRATE       B9600
-#define DATABITS           1
-#define NEWLINE          '\r'
-#define READTIMEOUT     5000
-#define WRITETIMEOUT    5000
+#define TTYPREFIX "/dev/tty"
+#define BAUDRATE            B9600
+#define DATABITS                1
+#define NEWLINE               '\r'
+#define READTIMEOUT          5000
+#define WRITETIMEOUT         5000
 
 
 int main(int argc, char** argv) {
     struct termios obdcfg;
-    int obd_fd;
+    int obd_fd = 0;
+    char portname[11];
+    int conn_success_flag = 0;
    
     /*
      * Configuring serial communication with the ELM327:
@@ -46,9 +48,22 @@ int main(int argc, char** argv) {
      *  Newline Character: \r
      */
     
-    if((obd_fd = open(PORTNAME, obd_fd, O_RDWR | O_NOCTTY | O_NDELAY )) < 0 || !isatty(obd_fd)) {
-        fprintf(stderr, "[%s]: Error opening serial port at %s: ", argv[0], PORTNAME);
-        perror("");
+    printf("Attempting to connect to a serial port...\n");
+    
+    for(int i = 0; (i < 10) && (conn_success_flag != 1); i++) {
+        sprintf(portname, "%sS%d", TTYPREFIX, i);
+        printf("...Trying %s...", portname);
+        fflush(stdout);
+        if((obd_fd = open(portname, obd_fd, O_RDWR | O_NOCTTY | O_NDELAY )) < 0 || !isatty(obd_fd)) {
+            perror("Failure");
+        } else {
+            printf("Success!\n");
+            conn_success_flag = 1;
+        }
+    }
+    
+    if(conn_success_flag != 1) {
+        fprintf(stderr, "Cannot connect to a serial port. Exiting.\n");
         exit(EXIT_FAILURE);
     }
     
@@ -57,16 +72,18 @@ int main(int argc, char** argv) {
     obdcfg.c_cflag |= ( CS8 );
     
     if(cfsetispeed(&obdcfg, BAUDRATE) < 0 || cfsetospeed(&obdcfg, BAUDRATE) < 0) {
-        fprintf(stderr, "[%s]: Error setting baud rate at %s: ", argv[0], PORTNAME);
-        perror("");
+        perror("Error setting baud rate");
         exit(EXIT_FAILURE);
     }
     
+    printf("Setting serial attributes...");
+    fflush(stdout);
+    
     if(tcsetattr(obd_fd, TCSANOW, &obdcfg) < 0) {
-        fprintf(stderr, "[%s]: Error setting serial attributes for %s: ", argv[0], PORTNAME);
-        perror("");
-        perror("Error setting serial attributes");
+        perror("Failure");
         exit(EXIT_FAILURE);
+    } else {
+        printf("Success!\n");
     }
     
     printf("Serial connection established\n");
