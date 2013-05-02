@@ -1,10 +1,12 @@
 VehicleHUD
 ==========
-* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 My senior design project is to build a projected heads-up display for a car
 that is projected on to the windshield. This system will pull vehicle
 information from the OBD jack located in all modern cars.
+
+Overall Implementation
+----------------------
 
 The initial software implementation will have only three steps:
  
@@ -23,7 +25,6 @@ pcDuino running Ubuntu 12.10 or 13.04.
 
 OBD Communication
 -----------------
-* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
 We will use a consumer device to allow us to communicate with the CAN bus
 via Bluetooth. This specific device/protocol may change, but in all likelihood
