@@ -46,8 +46,27 @@ int serial_connect();
 
 int main(int argc, char** argv) {
     int obd_fd = 0;
+    char buf[BUFSIZ];
+    ssize_t charsread;
     
     obd_fd = serial_connect();
+    
+    /* ---------------------------------------------------------------------
+     * Initializing the ELM327:
+     *  1. Reset the chip by sending it the string "ATZ"
+     *  2. (optional) verify that the chip has sent "ELM327 v1.4b"
+     *  3. Disable command echoing from the chip with "ATE0"
+     *  4. Ask the chip to find a protocol with "ATSP0"
+     *
+     * Note: All strings must be terminated by a carriage return.
+     * ---------------------------------------------------------------------*/
+    
+    write(obd_fd, "ATZ\r", 4);
+    
+    charsread = read(obd_fd, buf, sizeof(buf));
+    buf[charsread+1] = '\0';
+    
+    printf("Read a total of %d characters: %s", charsread, buf);
     
     return 0;
 }
