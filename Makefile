@@ -4,4 +4,4 @@ all: main.c
 	$(CC) $(CFLAGS) $^
 
 clean:
-	rm -f ./*.exe
+	rm -f ./*.exe ./*.stackdump
