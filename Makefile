@@ -1,5 +1,5 @@
 all:
-	gcc main.c
+	gcc -W main.c
 
 clean:
 	rm -f ./*.exe
