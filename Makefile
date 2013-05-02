@@ -1,5 +1,7 @@
-all:
-	gcc -W main.c
+CFLAGS = -W -std=gnu99
+
+all: main.c
+	$(CC) $(CFLAGS) $^
 
 clean:
 	rm -f ./*.exe
