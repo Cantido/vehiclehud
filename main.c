@@ -24,21 +24,7 @@
 #include <fcntl.h>
 #include <stdlib.h>
 
-#define TTYPREFIX "/dev/tty"
-#define BAUDRATE            B9600
-#define DATABITS                1
-#define NEWLINE               '\r'
-#define READTIMEOUT          5000
-#define WRITETIMEOUT         5000
-
-
-int main(int argc, char** argv) {
-    struct termios obdcfg;
-    int obd_fd = 0;
-    char portname[11];
-    int conn_success_flag = 0;
-   
-    /*
+/*
      * Configuring serial communication with the ELM327:
      *
      *  Baud rate: 9600
@@ -47,6 +33,30 @@ int main(int argc, char** argv) {
      *  Stop Bits: 1
      *  Newline Character: \r
      */
+
+#define TTYPREFIX "/dev/tty"
+#define BAUDRATE            B9600
+#define DATABITS                1
+#define NEWLINE               '\r'
+#define READTIMEOUT          5000
+#define WRITETIMEOUT         5000
+
+int serial_connect();
+
+
+int main(int argc, char** argv) {
+    int obd_fd = 0;
+    
+    obd_fd = serial_connect();
+    
+    return 0;
+}
+
+int serial_connect() {
+    struct termios obdcfg;
+    int obd_fd = 0;
+    char portname[11];
+    int conn_success_flag = 0;
     
     printf("Attempting to connect to a serial port...\n");
     
@@ -88,5 +98,5 @@ int main(int argc, char** argv) {
     
     printf("Serial connection established\n");
     
-    return 0;
+    return obd_fd;
 }
