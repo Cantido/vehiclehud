@@ -24,7 +24,7 @@
 #include <fcntl.h>
 #include <stdlib.h>
 
-/*
+    /*
      * Configuring serial communication with the ELM327:
      *
      *  Baud rate: 9600
@@ -33,25 +33,8 @@
      *  Stop Bits: 1
      *  Newline Character: \r
      */
-
-#define TTYPREFIX "/dev/tty"
-#define BAUDRATE            B9600
-#define DATABITS                1
-#define NEWLINE               '\r'
-#define READTIMEOUT          5000
-#define WRITETIMEOUT         5000
-
-int serial_connect();
-
-
-int main(int argc, char** argv) {
-    int obd_fd = 0;
-    char buf[BUFSIZ];
-    ssize_t charsread;
-    
-    obd_fd = serial_connect();
-    
-    /* ---------------------------------------------------------------------
+     
+     /* ---------------------------------------------------------------------
      * Initializing the ELM327:
      *  1. Reset the chip by sending it the string "ATZ"
      *  2. (optional) verify that the chip has sent "ELM327 v1.4b"
@@ -60,16 +43,41 @@ int main(int argc, char** argv) {
      *
      * Note: All strings must be terminated by a carriage return.
      * ---------------------------------------------------------------------*/
+
+#define TTYPREFIX "/dev/tty"
+#define BAUDRATE            B9600
+#define DATABITS                1
+#define NEWLINE               '\r'
+#define READTIMEOUT          5000
+#define WRITETIMEOUT         5000
+
+char buf[BUFSIZ];
+
+int serial_connect();
+
+
+int main(int argc, char** argv) {
+    int obd_fd = 0;
+    ssize_t charsread;
     
+    obd_fd = serial_connect();
+    
+    test_reset(obd_fd);
+    
+    return 0;
+}
+
+void test_reset(const int obd_fd) {
     write(obd_fd, "ATZ\r", 4);
     
     charsread = read(obd_fd, buf, sizeof(buf));
     buf[charsread+1] = '\0';
     
-    printf("Read a total of %d characters: %s", charsread, buf);
+    printf("Read a total of %d characters:\n%s", charsread, buf);
     
     return 0;
 }
+    
 
 int serial_connect() {
     struct termios obdcfg;
