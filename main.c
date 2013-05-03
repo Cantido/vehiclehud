@@ -54,7 +54,7 @@
 char buf[BUFSIZ];
 
 int serial_connect();
-
+void test_reset(const int obd_fd);
 
 int main(int argc, char** argv) {
     int obd_fd = 0;
@@ -68,6 +68,8 @@ int main(int argc, char** argv) {
 }
 
 void test_reset(const int obd_fd) {
+    ssize_t charsread;
+    
     write(obd_fd, "ATZ\r", 4);
     
     charsread = read(obd_fd, buf, sizeof(buf));
@@ -75,9 +77,8 @@ void test_reset(const int obd_fd) {
     
     printf("Read a total of %d characters:\n%s", charsread, buf);
     
-    return 0;
+    return;
 }
-    
 
 int serial_connect() {
     struct termios obdcfg;
