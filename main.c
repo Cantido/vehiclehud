@@ -54,7 +54,7 @@
 char buf[BUFSIZ];
 
 int serial_connect();
-void test_reset(const int obd_fd);
+void obd_init(const int obd_fd);
 
 int main(int argc, char** argv) {
     int obd_fd = 0;
@@ -62,12 +62,12 @@ int main(int argc, char** argv) {
     
     obd_fd = serial_connect();
     
-    test_reset(obd_fd);
+    obd_init(obd_fd);
     
     return 0;
 }
 
-void test_reset(const int obd_fd) {
+void obd_init(const int obd_fd) {
     ssize_t charsread;
     
     write(obd_fd, "ATZ\r", 4);
