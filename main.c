@@ -47,6 +47,21 @@ int main(int argc, char** argv) {
     return 0;
 }
 
+int get_data(int obd_fd, char* request, ssize_t num_bytes_expected) {
+    ssize_t charsread;
+    static int response;
+    
+    write(obd_fd, request, sizeof(request));
+    usleep(100);
+    charsread = read(obd_fd, buf, sizeof(buf));
+    
+    // TODO: error check first two bytes
+    
+    response = atoi(buf+2);
+    
+    return response;
+}
+
 /*
  * Applies settings to the ELM327 and makes sure that it is ready to
  *  communicate.
