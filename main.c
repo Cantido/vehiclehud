@@ -47,7 +47,7 @@ int main(int argc, char** argv) {
     return 0;
 }
 
-int get_data(int obd_fd, char* request, ssize_t num_bytes_expected) {
+int get_data(int obd_fd, char* request) {
     ssize_t charsread;
     static int response;
     
