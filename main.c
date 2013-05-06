@@ -50,6 +50,8 @@ int main(int argc, char** argv) {
 int get_data(int obd_fd, char* request) {
     static int response;
     
+    printf("Sending string \"%s\" to ELM327\n", request);
+    
     // replacing final character of request string with carriage return
     request[sizeof(request)] = LINEEND;
     
@@ -58,6 +60,8 @@ int get_data(int obd_fd, char* request) {
     read(obd_fd, buf, sizeof(buf));
     
     // TODO: error check first two bytes
+    
+    printf("Received \"%s\" from ELM327\n", buf);
     
     response = (int) strtol(buf+2, NULL, 16);
     
