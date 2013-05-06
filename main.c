@@ -60,7 +60,7 @@ int get_data(int obd_fd, char* request, ssize_t num_bytes_expected) {
     
     // TODO: error check first two bytes
     
-    response = atoi(buf+2);
+    response = (int) strtol(buf+2, NULL, 16);
     
     return response;
 }
