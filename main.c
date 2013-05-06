@@ -51,8 +51,10 @@ int get_data(int obd_fd, char* request, ssize_t num_bytes_expected) {
     ssize_t charsread;
     static int response;
     
+    // replacing final character of request string with carriage return
+    request[sizeof(request)] = '\r';
+    
     write(obd_fd, request, sizeof(request));
-    write(obd_fd, '\r', 1);
     usleep(100);
     charsread = read(obd_fd, buf, sizeof(buf));
     
