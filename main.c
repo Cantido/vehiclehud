@@ -27,7 +27,7 @@
 #define TTYPREFIX "/dev/tty"
 #define BAUDRATE            B9600
 #define DATABITS                1
-#define NEWLINE               '\r'
+#define LINEEND               '\r'
 #define READTIMEOUT          5000
 #define WRITETIMEOUT         5000
 
@@ -51,7 +51,7 @@ int get_data(int obd_fd, char* request) {
     static int response;
     
     // replacing final character of request string with carriage return
-    request[sizeof(request)] = '\r';
+    request[sizeof(request)] = LINEEND;
     
     write(obd_fd, request, sizeof(request));
     usleep(100);
