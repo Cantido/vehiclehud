@@ -48,7 +48,6 @@ int main(int argc, char** argv) {
 }
 
 int get_data(int obd_fd, char* request) {
-    ssize_t charsread;
     static int response;
     
     // replacing final character of request string with carriage return
@@ -56,7 +55,7 @@ int get_data(int obd_fd, char* request) {
     
     write(obd_fd, request, sizeof(request));
     usleep(100);
-    charsread = read(obd_fd, buf, sizeof(buf));
+    read(obd_fd, buf, sizeof(buf));
     
     // TODO: error check first two bytes
     
