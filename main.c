@@ -38,7 +38,6 @@ void obd_init(const int obd_fd);
 
 int main(int argc, char** argv) {
     int obd_fd = 0;
-    ssize_t charsread;
     
     obd_fd = serial_connect();
     
