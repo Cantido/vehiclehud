@@ -31,6 +31,8 @@
 #define READTIMEOUT          5000
 #define WRITETIMEOUT         5000
 
+#define PID_RPM "010C"
+
 char buf[BUFSIZ];
 
 int serial_connect();
@@ -39,11 +41,17 @@ int get_data(int obd_fd, char* request);
 
 int main(int argc, char** argv) {
     int obd_fd = 0;
+    int rpm = 0;
     
     obd_fd = serial_connect();
     
     obd_init(obd_fd);
     
+    while(1) {
+        rpm = get_data(obd_fd, PID_RPM) / 4;
+        prinf("RPM: %d revolutions/min\n", rpm);
+        sleep(2);
+    }
     return 0;
 }
 
