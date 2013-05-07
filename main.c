@@ -35,6 +35,7 @@ char buf[BUFSIZ];
 
 int serial_connect();
 void obd_init(const int obd_fd);
+int get_data(int obd_fd, char* request);
 
 int main(int argc, char** argv) {
     int obd_fd = 0;
