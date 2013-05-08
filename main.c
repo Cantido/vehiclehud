@@ -49,7 +49,7 @@ int main(int argc, char** argv) {
     
     while(1) {
         rpm = get_data(obd_fd, PID_RPM) / 4;
-        prinf("RPM: %d revolutions/min\n", rpm);
+        printf("RPM: %d revolutions/min\n", rpm);
         sleep(2);
     }
     return 0;
