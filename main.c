@@ -24,14 +24,14 @@
 #include <fcntl.h>
 #include <stdlib.h>
 
+#include "obd.h"
+
 #define TTYPREFIX "/dev/tty"
 #define BAUDRATE            B9600
 #define DATABITS                1
 #define LINEEND               '\r'
 #define READTIMEOUT          5000
 #define WRITETIMEOUT         5000
-
-#define PID_RPM "010C"
 
 char buf[BUFSIZ];
 
