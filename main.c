@@ -104,7 +104,7 @@ void obd_init(const int obd_fd) {
     charsread = read(obd_fd, buf, sizeof(buf));
     buf[charsread+1] = '\0';
     
-    printf("Read a total of %d characters:\n%s", charsread, buf);
+    printf("Read a total of %zd characters:\n%s", charsread, buf);
     
     return;
 }
