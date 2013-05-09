@@ -38,6 +38,7 @@ char buf[BUFSIZ];
 int serial_connect();
 void obd_init(const int obd_fd);
 int get_data(int obd_fd, char* request);
+int get_RPM(int obd_fd);
 
 int main(int argc, char** argv) {
     int obd_fd = 0;
@@ -48,11 +49,15 @@ int main(int argc, char** argv) {
     obd_init(obd_fd);
     
     while(1) {
-        rpm = get_data(obd_fd, PID_RPM) / 4;
+        rpm = get_RPM(obd_fd);
         printf("RPM: %d revolutions/min\n", rpm);
         sleep(2);
     }
     return 0;
+}
+
+int get_RPM(int obd_fd) {
+    return (get_data(obd_fd, PID_RPM) / 4);
 }
 
 int get_data(int obd_fd, char* request) {
