@@ -22,6 +22,7 @@
 #include <unistd.h>
 
 #include "obd.h"
+#include "elm327.h"
 
 int main(int argc, char** argv) {
     int obd_fd = 0;
