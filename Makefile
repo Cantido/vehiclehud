@@ -12,4 +12,4 @@ obd.o: obd.h obd.c
 	$(CC) $(CFLAGS) -c $^
 
 clean:
-	rm -f ./*.o ./*.exe ./*.stackdump
+	rm -f ./*.o ./*.gch ./*.exe ./*.stackdump
