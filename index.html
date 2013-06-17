@@ -1,0 +1,122 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Vehiclehud by Cantido</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <script src="javascripts/scale.fix.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>Vehiclehud</h1>
+        <p>Make your car like a fighter jet! But not as fast!</p>
+        <p class="view"><a href="https://github.com/Cantido/vehiclehud">View the Project on GitHub <small>Cantido/vehiclehud</small></a></p>
+        <ul>
+          <li><a href="https://github.com/Cantido/vehiclehud/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/Cantido/vehiclehud/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/Cantido/vehiclehud">View On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
+        <h1>
+<a name="vehiclehud" class="anchor" href="#vehiclehud"><span class="octicon octicon-link"></span></a>VehicleHUD</h1>
+
+<p>Our senior design project is to build a projected heads-up display for a car
+that is projected on to the windshield. This system will pull vehicle
+information from the OBD jack located in all modern cars.</p>
+
+<h2>
+<a name="overall-implementation" class="anchor" href="#overall-implementation"><span class="octicon octicon-link"></span></a>Overall Implementation</h2>
+
+<p>The initial software implementation will have only three steps:</p>
+
+<ol>
+<li>Initialize the serial connection struct</li>
+<li>Start the serial connection.</li>
+<li>Enter an infinite loop, displaying speed and RPM periodically.</li>
+</ol><p>At this point, this program is only an attempt to parse OBD data from the
+vehicle. Once the data connection is established, we can begin adding other
+components. The data will be reflected on to the windshield with a vacuum
+fluorescent display. The light from the dispay will be collimated with either
+mirrors or lenses.</p>
+
+<p>This prgram will be installed on a Linux-based operating system, most likely a
+pcDuino running Ubuntu 12.10 or 13.04.</p>
+
+<h2>
+<a name="obd-communication" class="anchor" href="#obd-communication"><span class="octicon octicon-link"></span></a>OBD Communication</h2>
+
+<p>We will use a consumer device to allow us to communicate with the CAN bus
+via Bluetooth. This specific device/protocol may change, but in all likelihood
+we will still be using a serial device, even if it isn't a Bluetooth device.</p>
+
+<p>Specifically, we are performing initial testing with an ELM327 OBD to RS232
+Interpreter. The serial requirements for the device are as follows:</p>
+
+<ul>
+<li>Baud rate: <code>9600</code> symbols/sec</li>
+<li>Data bits: <code>8</code>
+</li>
+<li>Parity: <code>None</code>
+</li>
+<li>Stop bits: <code>1</code>
+</li>
+<li>Line end: Carriage return (<code>'\r'</code> or <code>0x0D</code>) (input and output)</li>
+</ul><p>A majority of messages will be less than 7 data bytes long. We must send a
+a signal of <code>ATAL</code> to allow longer messages.</p>
+
+<h3>
+<a name="initialization" class="anchor" href="#initialization"><span class="octicon octicon-link"></span></a>Initialization</h3>
+
+<ol>
+<li>Open a non-blocking, read-write file descriptor, and apply the above
+attributes to begin the serial connection.</li>
+<li>Send the <em>Reset All</em> signal, <code>ATZ</code>.</li>
+<li>
+<em>Disable Command Echoing</em> with <code>ATE0</code>.</li>
+<li>Ask the chip to <em>find a protocol</em> with <code>ATSP0</code>.</li>
+</ol><p>At this point, we can begin communicating normally.</p>
+
+<h3>
+<a name="vehicle-data-queries" class="anchor" href="#vehicle-data-queries"><span class="octicon octicon-link"></span></a>Vehicle Data Queries</h3>
+
+<p>To request data from the vehicle's systems, we send it a byte string according
+to the OBD standard. More information may be found on <a href="https://en.wikipedia.org/wiki/OBD-II_PIDs" title="OBD-II PIDs - Wikipedia, the free encyclopedia">Wikipedia</a>.</p>
+
+<p>Commands take the form of:</p>
+
+<ul>
+<li>First byte: Mode number</li>
+<li>Second byte: PID</li>
+</ul><p>When we issue a command (terminated by a carriage return), the device will
+respond with a hex string consisting of:</p>
+
+<ul>
+<li>First byte: Mode number + <code>0x40</code> to signify a response</li>
+<li>Second byte: Echo of requested PID</li>
+<li>Remaining bytes: Requested data</li>
+</ul><p>As a prototype implementation, our system will be requesting the speed
+(<code>0x010C</code>) and RPM (<code>0x010D</code>) and printing this information
+to the console.</p>
+
+<hr><p>Copyright 2013 Robert Richter and Aaron Hall<br>
+Distributed under the terms of the GNU GPL.</p>
+      </section>
+    </div>
+    <footer>
+      <p>Project maintained by <a href="https://github.com/Cantido">Cantido</a></p>
+      <p>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></p>
+    </footer>
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+    
+  </body>
+</html>
