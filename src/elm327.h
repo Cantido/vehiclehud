@@ -1,7 +1,7 @@
 #ifndef ELM327_H
 #define ELM327_H
 
-#define TTYPREFIX   "/dev/tty"
+#define TTYPREFIX   "/dev/ttyUSB"
 #define BAUDRATE        B9600
 #define DATABITS            1
 #define LINEEND           '\r'

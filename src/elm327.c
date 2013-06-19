@@ -34,7 +34,7 @@ int serial_connect() {
     printf("Attempting to connect to a serial port...\n");
     
     for(int i = 0; (i < 10) && (conn_success_flag != 1); i++) {
-        sprintf(portname, "%sS%d", TTYPREFIX, i);
+        sprintf(portname, "%s%d", TTYPREFIX, i);
         printf("...Trying %s...", portname);
         fflush(stdout);
         if((obd_fd = open(portname, obd_fd, O_RDWR | O_NOCTTY | O_NONBLOCK )) < 0 || !isatty(obd_fd)) {
@@ -131,16 +131,13 @@ int get_elm327_data(int obd_fd, char* request) {
     
     printf("Sending string \"%s\" to ELM327\n", request);
     
-    // replacing final character of request string with carriage return
-    request[sizeof(request)] = LINEEND;
-    
     write(obd_fd, request, sizeof(request));
     usleep(100);
     read(obd_fd, buf, sizeof(buf));
     
     // TODO: error check first two bytes
     
-    printf("Received \"%s\" from ELM327\n", buf);
+    printf("Received data from the ELM327\n", buf);
     
     response = (int) strtol(buf+2, NULL, 16);
     

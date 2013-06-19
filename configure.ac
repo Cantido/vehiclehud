@@ -8,7 +8,7 @@ AC_PROG_CC
 AC_PROG_CC_STDC
 AC_LANG(C)
 
-AC_CHECK_HEADERS([fcntl.h stdlib.h termios.h unistd.h])
+AC_CHECK_HEADERS([fcntl.h stdlib.h termios.h unistd.h usb.h])
 
 AC_TYPE_SSIZE_T
 AC_CHECK_FUNCS([strtol])
