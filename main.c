@@ -37,5 +37,5 @@ int main(int argc, char** argv) {
         printf("RPM: %d revolutions/min\n", rpm);
         sleep(2);
     }
-    return 0;
+    return (0);
 }

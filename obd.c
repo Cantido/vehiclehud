@@ -31,5 +31,5 @@
 #define GET_OBD_DATA(x, y) get_elm327_data(x, y)
 
 int get_RPM(int obd_fd) {
-    return GET_OBD_DATA(obd_fd, PID_RPM) / 4;
+    return (GET_OBD_DATA(obd_fd, PID_RPM) / 4);
 }

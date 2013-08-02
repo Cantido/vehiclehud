@@ -88,7 +88,7 @@ int serial_connect() {
      
     printf("Serial connection established\n");
     
-    return obd_fd;
+    return (obd_fd);
 }
 
 /* obd_init: Applies settings to the ELM327 
@@ -119,7 +119,7 @@ void obd_init(const int obd_fd) {
     charsread = read(obd_fd, buf, sizeof(buf));
     buf[charsread+1] = '\0';
     
-    printf("Read a total of %d characters:\n%s", charsread, buf);
+    printf("Read a total of %d characters:\n%s", (int) charsread, buf);
     
     return;
 }
@@ -143,5 +143,5 @@ int get_elm327_data(int obd_fd, char* request) {
     
     response = (int) strtol(buf+2, NULL, 16);
     
-    return response;
+    return (response);
 }
