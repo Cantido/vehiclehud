@@ -1,4 +1,4 @@
-VehicleHUD
+VehicleHUD [![Build Status](https://travis-ci.org/Cantido/vehiclehud.png?branch=master)](https://travis-ci.org/Cantido/vehiclehud)
 ==========
 
 My senior design project is to build a projected heads-up display for a car
