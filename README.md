@@ -3,7 +3,8 @@ VehicleHUD [![Build Status][ci-img]][ci-link]
 
 The purpose of this project is to design and build a projected heads-up
 display for a car that is projected on to the windshield. This system will
-pull vehicle information from the OBD jack located in all modern cars.
+pull vehicle information from the OBD-II diagnostic jack located in all modern
+cars.
 
 Building
 --------
