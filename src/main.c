@@ -20,6 +20,7 @@
 
 #include <stdio.h>
 #include <unistd.h>
+#include <config.h>
 
 #include "obd.h"
 #include "elm327.h"

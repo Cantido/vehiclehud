@@ -25,6 +25,7 @@
 #include <stdlib.h>
 #include <termios.h>
 #include <unistd.h>
+#include <config.h>
 #include "obd.h"
 
 #include "elm327.h"
