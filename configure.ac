@@ -1,7 +1,6 @@
 #                                               -*- Autoconf -*-
 # Process this file with autoconf to produce a configure script.
 
-AC_PREREQ([2.69])
 AC_INIT([vehiclehud], [1.0], [robert.c.richter@gmail.com])
 AM_INIT_AUTOMAKE([-Wall -Werror foreign])
 
