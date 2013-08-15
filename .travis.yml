@@ -1,5 +1,5 @@
 language: c
 
-before_script: autoreconf --install || exit 1
+before_script: autoreconf --install
 
 script: ./configure && make
