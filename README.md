@@ -8,12 +8,14 @@ cars.
 
 Building
 --------
-This project is built using `make`:
+This project is built using GNU Autotools. To build from this repository:
 
-    make all
+    $ ./autogen.sh
+    $ ./configure
+    $ make
+    $ sudo make install
 
-This will yield an executable called `vehiclehud`, or `vehiclehud.exe` if
-compiled with Cygwin.
+This will yield an executable named `vehiclehud`
 
 Using Vehiclehud
 ------------------
