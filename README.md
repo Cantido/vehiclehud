@@ -10,7 +10,7 @@ Building
 --------
 This project is built using GNU Autotools. To build from this repository:
 
-    $ ./autogen.sh
+    $ autoreconf --install
     $ ./configure
     $ make
     $ sudo make install
