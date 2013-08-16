@@ -1,4 +1,4 @@
-EESchema-DOCLIB  Version 2.0  Date: 7/6/2013 2:18:56 PM
+EESchema-DOCLIB  Version 2.0  Date: 8/14/2013 8:42:04 PM
 #
 $CMP C
 D Condensateur non polarise
@@ -6,6 +6,11 @@ $ENDCMP
 #
 $CMP C_SMALL
 D Condensateur non polarise
+$ENDCMP
+#
+$CMP FT2232H
+D 4 UART to USB
+K FTDI, UART, USB
 $ENDCMP
 #
 $CMP FT4232H

@@ -1,4 +1,4 @@
-update=6/5/2013 9:06:54 PM
+update=8/14/2013 8:07:34 PM
 version=1
 last_client=eeschema
 [cvpcb]
@@ -81,7 +81,8 @@ LibName24=display
 LibName25=cypress
 LibName26=siliconi
 LibName27=opto
-LibName28=atmel
-LibName29=contrib
-LibName30=valves
-LibName31=SeniorDesign
+LibName28=atmega32u4bb-from_eagle
+LibName29=atmel
+LibName30=contrib
+LibName31=valves
+LibName32=SeniorDesign
