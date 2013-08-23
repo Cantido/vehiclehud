@@ -1,4 +1,4 @@
-update=7/17/2013 8:52:27 PM
+update=8/22/2013 2:09:43 PM
 last_client=eeschema
 [eeschema]
 version=1
@@ -40,3 +40,4 @@ LibName28=atmel
 LibName29=contrib
 LibName30=valves
 LibName31=SeniorDesign
+LibName32=atmega32u4bb-from_eagle

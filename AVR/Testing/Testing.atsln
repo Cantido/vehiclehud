@@ -7,6 +7,8 @@ Project("{E66E83B9-2572-4076-B26E-6BE79FF3018A}") = "VFDTesting", "VFDTesting\VF
 EndProject
 Project("{E66E83B9-2572-4076-B26E-6BE79FF3018A}") = "LCDTesting", "LCDTesting\LCDTesting.cppproj", "{983E7676-FD53-4FD0-A810-491107CAA683}"
 EndProject
+Project("{E66E83B9-2572-4076-B26E-6BE79FF3018A}") = "FullTest", "FullTest\FullTest.cppproj", "{FB10673A-70F9-47F1-A947-07576E15B667}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|AVR = Debug|AVR
@@ -25,6 +27,10 @@ Global
 		{983E7676-FD53-4FD0-A810-491107CAA683}.Debug|AVR.Build.0 = Debug|AVR
 		{983E7676-FD53-4FD0-A810-491107CAA683}.Release|AVR.ActiveCfg = Release|AVR
 		{983E7676-FD53-4FD0-A810-491107CAA683}.Release|AVR.Build.0 = Release|AVR
+		{FB10673A-70F9-47F1-A947-07576E15B667}.Debug|AVR.ActiveCfg = Debug|AVR
+		{FB10673A-70F9-47F1-A947-07576E15B667}.Debug|AVR.Build.0 = Debug|AVR
+		{FB10673A-70F9-47F1-A947-07576E15B667}.Release|AVR.ActiveCfg = Release|AVR
+		{FB10673A-70F9-47F1-A947-07576E15B667}.Release|AVR.Build.0 = Release|AVR
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

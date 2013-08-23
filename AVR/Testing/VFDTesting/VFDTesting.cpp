@@ -2,9 +2,10 @@
 #include "Noritake_VFD_GUU100.h"
 #include "font20x32_digits.h"
 #include "font8x8.h"
-#include <util/delay.h>
 
+#include <util/delay.h>
 #include <avr/interrupt.h>
+#include <avr/pgmspace.h>
 
 static Noritake_VFD_GUU100 vfd;
 volatile uint8_t brightness = 100;
@@ -29,8 +30,6 @@ static const uint8_t PROGMEM img[] = {
 
 int main()
 {
-	DDRB = 0x03; // B0 as output
-	
 	//ADC prescaler to 128 - 125kHz
 	ADCSRA |= (1 << ADPS2) | (1 << ADPS1) | (1 << ADPS0);
 	

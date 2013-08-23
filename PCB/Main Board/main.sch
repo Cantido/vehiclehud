@@ -1,0 +1,308 @@
+EESchema Schematic File Version 2
+LIBS:power
+LIBS:device
+LIBS:transistors
+LIBS:conn
+LIBS:linear
+LIBS:regul
+LIBS:74xx
+LIBS:cmos4000
+LIBS:adc-dac
+LIBS:memory
+LIBS:xilinx
+LIBS:special
+LIBS:microcontrollers
+LIBS:dsp
+LIBS:microchip
+LIBS:analog_switches
+LIBS:motorola
+LIBS:texas
+LIBS:intel
+LIBS:audio
+LIBS:interface
+LIBS:digital-audio
+LIBS:philips
+LIBS:display
+LIBS:cypress
+LIBS:siliconi
+LIBS:opto
+LIBS:atmel
+LIBS:contrib
+LIBS:valves
+LIBS:SeniorDesign
+LIBS:atmega32u4bb-from_eagle
+LIBS:main-cache
+EELAYER 27 0
+EELAYER END
+$Descr A4 11693 8268
+encoding utf-8
+Sheet 1 2
+Title ""
+Date "22 aug 2013"
+Rev ""
+Comp ""
+Comment1 ""
+Comment2 ""
+Comment3 ""
+Comment4 ""
+$EndDescr
+$Comp
+L FT2232H U?
+U 1 1 52164ABE
+P 5900 3950
+F 0 "U?" H 4200 1800 60  0000 C CNN
+F 1 "FT2232H" H 6900 1950 60  0000 C CNN
+F 2 "~" H 5850 1800 60  0000 C CNN
+F 3 "~" H 5850 1800 60  0000 C CNN
+	1    5900 3950
+	1    0    0    -1  
+$EndComp
+$Sheet
+S 9150 3800 1250 950 
+U 52165FF9
+F0 "AVR" 50
+F1 "avr.sch" 50
+$EndSheet
+$Sheet
+S 8900 1550 1400 1100
+U 5216605B
+F0 "OBD" 50
+F1 "obd.sch" 50
+$EndSheet
+$Comp
+L GND #PWR?
+U 1 1 52166158
+P 3700 6600
+F 0 "#PWR?" H 3700 6600 30  0001 C CNN
+F 1 "GND" H 3700 6530 30  0001 C CNN
+F 2 "" H 3700 6600 60  0000 C CNN
+F 3 "" H 3700 6600 60  0000 C CNN
+	1    3700 6600
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	3850 5850 3700 5850
+Wire Wire Line
+	3700 5850 3700 6600
+Wire Wire Line
+	4900 6350 4900 6450
+Wire Wire Line
+	4900 6450 6400 6450
+Wire Wire Line
+	6400 6450 6400 6350
+Wire Wire Line
+	5350 6350 5350 6450
+Connection ~ 5350 6450
+Wire Wire Line
+	5500 6350 5500 6450
+Connection ~ 5500 6450
+$Comp
+L GND #PWR?
+U 1 1 52166191
+P 5700 6550
+F 0 "#PWR?" H 5700 6550 30  0001 C CNN
+F 1 "GND" H 5700 6480 30  0001 C CNN
+F 2 "" H 5700 6550 60  0000 C CNN
+F 3 "" H 5700 6550 60  0000 C CNN
+	1    5700 6550
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	5650 6350 5650 6450
+Connection ~ 5650 6450
+Wire Wire Line
+	5800 6350 5800 6450
+Connection ~ 5800 6450
+Wire Wire Line
+	5700 6550 5700 6450
+Connection ~ 5700 6450
+Wire Wire Line
+	5950 6350 5950 6450
+Connection ~ 5950 6450
+Wire Wire Line
+	6100 6350 6100 6450
+Connection ~ 6100 6450
+Wire Wire Line
+	6250 6350 6250 6450
+Connection ~ 6250 6450
+$Comp
+L X_XTAL X?
+U 1 1 52166205
+P 3150 5550
+F 0 "X?" H 3050 5700 50  0000 L BNN
+F 1 "X_XTAL" H 3000 5350 50  0000 L BNN
+F 2 "adaprog-NX5032" H 3150 5700 50  0001 C CNN
+F 3 "" H 3150 5550 60  0000 C CNN
+	1    3150 5550
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	3350 5550 3850 5550
+Wire Wire Line
+	2950 5550 2850 5550
+Wire Wire Line
+	2850 5250 2850 5850
+Wire Wire Line
+	2850 5250 3850 5250
+$Comp
+L C_SMALL C?
+U 1 1 5216624D
+P 2850 5950
+F 0 "C?" H 2850 6050 40  0000 L CNN
+F 1 "27pF" H 2856 5865 40  0000 L CNN
+F 2 "~" H 2888 5800 30  0000 C CNN
+F 3 "~" H 2850 5950 60  0000 C CNN
+	1    2850 5950
+	1    0    0    -1  
+$EndComp
+$Comp
+L C_SMALL C?
+U 1 1 5216625C
+P 3450 5950
+F 0 "C?" H 3450 6050 40  0000 L CNN
+F 1 "27pF" H 3456 5865 40  0000 L CNN
+F 2 "~" H 3488 5800 30  0000 C CNN
+F 3 "~" H 3450 5950 60  0000 C CNN
+	1    3450 5950
+	1    0    0    -1  
+$EndComp
+$Comp
+L GND #PWR?
+U 1 1 5216626B
+P 2850 6150
+F 0 "#PWR?" H 2850 6150 30  0001 C CNN
+F 1 "GND" H 2850 6080 30  0001 C CNN
+F 2 "" H 2850 6150 60  0000 C CNN
+F 3 "" H 2850 6150 60  0000 C CNN
+	1    2850 6150
+	1    0    0    -1  
+$EndComp
+$Comp
+L GND #PWR?
+U 1 1 5216627A
+P 3450 6150
+F 0 "#PWR?" H 3450 6150 30  0001 C CNN
+F 1 "GND" H 3450 6080 30  0001 C CNN
+F 2 "" H 3450 6150 60  0000 C CNN
+F 3 "" H 3450 6150 60  0000 C CNN
+	1    3450 6150
+	1    0    0    -1  
+$EndComp
+Connection ~ 2850 5550
+Wire Wire Line
+	3450 5850 3450 5550
+Connection ~ 3450 5550
+Wire Wire Line
+	2850 6050 2850 6150
+Wire Wire Line
+	3450 6050 3450 6150
+$Comp
+L R_US R?
+U 1 1 5216639C
+P 3450 3950
+F 0 "R?" H 3575 4025 40  0000 C CNN
+F 1 "12k" H 3625 3925 40  0000 C CNN
+F 2 "~" H 3450 3950 60  0000 C CNN
+F 3 "~" H 3450 3950 60  0000 C CNN
+	1    3450 3950
+	1    0    0    -1  
+$EndComp
+$Comp
+L GND #PWR?
+U 1 1 521663AB
+P 3450 4200
+F 0 "#PWR?" H 3450 4200 30  0001 C CNN
+F 1 "GND" H 3450 4130 30  0001 C CNN
+F 2 "" H 3450 4200 60  0000 C CNN
+F 3 "" H 3450 4200 60  0000 C CNN
+	1    3450 4200
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	3850 3750 3450 3750
+Wire Wire Line
+	3450 3750 3450 3800
+Wire Wire Line
+	3450 4100 3450 4200
+$Comp
+L R_US R?
+U 1 1 52166400
+P 3500 3400
+F 0 "R?" H 3625 3475 40  0000 C CNN
+F 1 "1k" H 3675 3375 40  0000 C CNN
+F 2 "~" H 3500 3400 60  0000 C CNN
+F 3 "~" H 3500 3400 60  0000 C CNN
+	1    3500 3400
+	0    -1   -1   0   
+$EndComp
+$Comp
+L +3.3V #PWR?
+U 1 1 5216640F
+P 3250 3250
+F 0 "#PWR?" H 3250 3210 30  0001 C CNN
+F 1 "+3.3V" H 3250 3360 30  0000 C CNN
+F 2 "" H 3250 3250 60  0000 C CNN
+F 3 "" H 3250 3250 60  0000 C CNN
+	1    3250 3250
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	3250 3250 3250 3400
+Wire Wire Line
+	3250 3400 3350 3400
+Wire Wire Line
+	3650 3400 3850 3400
+$Comp
+L CN_USB CN?
+U 1 1 52166478
+P 1900 2950
+F 0 "CN?" H 1500 3290 50  0000 L BNN
+F 1 "CN_USB" H 1500 2550 50  0000 L BNN
+F 2 "adafruit-USB-MINIB" H 1900 3100 50  0001 C CNN
+F 3 "" H 1900 2950 60  0000 C CNN
+	1    1900 2950
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	2300 3150 2400 3150
+$Comp
+L GND #PWR?
+U 1 1 521664AE
+P 2400 3250
+F 0 "#PWR?" H 2400 3250 30  0001 C CNN
+F 1 "GND" H 2400 3180 30  0001 C CNN
+F 2 "" H 2400 3250 60  0000 C CNN
+F 3 "" H 2400 3250 60  0000 C CNN
+	1    2400 3250
+	1    0    0    -1  
+$EndComp
+$Comp
+L +5V #PWR?
+U 1 1 521664BD
+P 2400 2600
+F 0 "#PWR?" H 2400 2690 20  0001 C CNN
+F 1 "+5V" H 2400 2690 30  0000 C CNN
+F 2 "" H 2400 2600 60  0000 C CNN
+F 3 "" H 2400 2600 60  0000 C CNN
+	1    2400 2600
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	2300 2750 2400 2750
+Wire Wire Line
+	2400 2750 2400 2600
+Wire Wire Line
+	2300 2850 3200 2850
+Wire Wire Line
+	3200 2850 3200 3050
+Wire Wire Line
+	3200 3050 3850 3050
+Wire Wire Line
+	3850 2850 3350 2850
+Wire Wire Line
+	3350 2850 3350 2950
+Wire Wire Line
+	3350 2950 2300 2950
+Wire Wire Line
+	2400 3150 2400 3250
+$EndSCHEMATC
