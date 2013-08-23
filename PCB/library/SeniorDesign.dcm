@@ -1,0 +1,61 @@
+EESchema-DOCLIB  Version 2.0  Date: 8/14/2013 8:48:03 PM
+#
+$CMP C
+D Condensateur non polarise
+$ENDCMP
+#
+$CMP C_SMALL
+D Condensateur non polarise
+$ENDCMP
+#
+$CMP FT2232H
+D 4 UART to USB
+K FTDI, UART, USB
+$ENDCMP
+#
+$CMP FT4232H
+D 4 UART to USB
+K FTDI, UART, USB
+$ENDCMP
+#
+$CMP LTC3112
+D 2.7 to 15V Buck-Boost Regulator
+K linear technology, buck-boost, buck, boost, regulator, supply
+$ENDCMP
+#
+$CMP LTC3633
+D Dual-Channel buck regulator.
+K buck, regulator, switching, linear technology
+$ENDCMP
+#
+$CMP LTC3633A-1
+D Dual-Channel buck regulator.
+K buck, regulator, switching, linear technology
+$ENDCMP
+#
+$CMP LTC4365
+D UV, OV, Reverse Supply Protection Controller
+K linear technology, protection
+$ENDCMP
+#
+$CMP R_US
+D Resistor
+K resistor
+$ENDCMP
+#
+$CMP SI4946
+D Dual MOSFET
+K mosfet, dual
+$ENDCMP
+#
+$CMP SMCJ40A
+D TVS Diode
+K TVS, diode, protection
+$ENDCMP
+#
+$CMP STN1110
+D OBD to UART converter
+K OBS, UART, scantool
+$ENDCMP
+#
+#End Doc Library
