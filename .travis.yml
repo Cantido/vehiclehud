@@ -1,1 +1,3 @@
 language: python
+
+script: nosetests src/tests.py
