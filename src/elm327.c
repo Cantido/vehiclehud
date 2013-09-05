@@ -7,6 +7,9 @@
 
 #include "elm327.h"
 
+static char* elm_locations[] = { "/dev/USB0" };
+static int num_locations = sizeof(elm_locations) / sizeof(elm_locations[0]);
+
 /* serial_connect: Attempts to open up & configure a file descriptor
  *  for a serial connection to the ELM327.
  * 
@@ -19,22 +22,21 @@
  */
 
 int serial_connect() {
-    struct termios obdcfg;
     int obd_fd = 0;
-    char portname[11];
+    char* portname;
     int conn_success_flag = 0;
     
     /*
-     * Step 1: Open a file descriptor to /dev/ttySX
-     *
-     *  Method: Iterate through /dev/ttyS0 through /dev/ttyS9,
-     *    and see if any work.
+     * Step 1: Open a file descriptor to the device
+     * 
+     * On Rasbian, a USB ELM327 will be located at /dev/USBx, usually /dev/USB0
      */
     
-    printf("Attempting to connect to a serial port...\n");
+    printf("Attempting to connect to the ELM327 via USB...\n");
+    
     
     for(int i = 0; (i < 10) && (conn_success_flag != 1); i++) {
-        sprintf(portname, "%s%d", TTYPREFIX, i);
+        portname = elm_locations[i];
         printf("...Trying %s...", portname);
         fflush(stdout);
         if((obd_fd = open(portname, obd_fd, O_RDWR | O_NOCTTY | O_NONBLOCK )) < 0 || !isatty(obd_fd)) {
@@ -50,43 +52,6 @@ int serial_connect() {
         exit(EXIT_FAILURE);
     }
     
-    /*
-     * Step 2: Set termios flags
-     *
-     *  Input flags:   ICRNL: Translate CR to NL on input
-     *  Output flags:  none
-     *  Control flags: CS8: Set character size to 8 bits
-     *
-     *  Input and Output baud rate set to BAUDRATE
-     */
-    
-    obdcfg.c_iflag |= ( ICRNL );
-    //obdcfg.c_oflag |= ();
-    obdcfg.c_cflag |= ( CS8 );
-    
-    if(cfsetispeed(&obdcfg, BAUDRATE) < 0 || cfsetospeed(&obdcfg, BAUDRATE) < 0) {
-        perror("Error setting baud rate");
-        exit(EXIT_FAILURE);
-    }
-    
-    /*
-     * Step 3: Apply termios attributes to the file descriptor
-     */
-    
-    printf("Setting serial attributes...");
-    fflush(stdout);
-    
-    if(tcsetattr(obd_fd, TCSANOW, &obdcfg) < 0) {
-        perror("Failure");
-        exit(EXIT_FAILURE);
-    } else {
-        printf("Success!\n");
-    }
-    
-    /*
-     * Done!
-     */
-     
     printf("Serial connection established\n");
     
     return (obd_fd);
@@ -115,14 +80,18 @@ void obd_init(const int obd_fd) {
     ssize_t charsread;
     char buf[BUFSIZ];
     
-    write(obd_fd, "ATZ\r", 4);
-    
+    write(obd_fd, "ATZ", 3);
+    sleep(1);
     charsread = read(obd_fd, buf, sizeof(buf));
     buf[charsread+1] = '\0';
     
     printf("Read a total of %d characters:\n%s", (int) charsread, buf);
     
     return;
+}
+
+void obd_close(const int obd_fd) {
+    close(obd_fd);
 }
 
 int get_elm327_data(int obd_fd, char* request) {

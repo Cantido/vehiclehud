@@ -34,9 +34,10 @@ int main(int argc, char** argv) {
     obd_init(obd_fd);
     
     while(1) {
-        rpm = get_RPM(obd_fd);
-        printf("RPM: %d revolutions/min\n", rpm);
-        sleep(2);
+        obd_init(obd_fd);
+        sleep(1);
     }
+    
+    obd_close(obd_fd);
     return (0);
 }
