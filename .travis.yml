@@ -1,5 +1,1 @@
-language: c
-
-before_script: autoreconf --install
-
-script: ./configure && make
+language: python
