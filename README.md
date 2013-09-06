@@ -6,20 +6,10 @@ display for a car that is projected on to the windshield. This system will
 pull vehicle information from the OBD-II diagnostic jack located in all modern
 cars.
 
-Building
---------
-This project is built using GNU Autotools. To build from this repository:
-
-    $ autoreconf --install
-    $ ./configure
-    $ make
-    $ sudo make install
-
-This will yield an executable named `vehiclehud`
-
 Using Vehiclehud
 ------------------
-Executing the vehiclehud executable will start the program. There is no
+Vehiclehud is built on Python version 2.7.5 for compatibility with the Pyserial
+library. Executing vehiclehud.py will start the program. There is no
 configuration necessary. Vehiclehud will scan for a serial port to use and
 attempt to connect to an OBD-II adapter. If it can connect, it will begin
 polling the OBD device for vehicle information and printing the current RPM to
