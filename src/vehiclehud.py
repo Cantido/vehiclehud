@@ -1,4 +1,4 @@
-import os
+import io
 import serial
 import sys
 import time
@@ -10,7 +10,7 @@ class ELM327:
         elif sys.platform == "linux2":
             port = "/dev/ttyUSB0"
             
-        self.ser = serial.Serial(port,baudrate=38400, timeout=1)
+        self.ser = serial.Serial(port,baudrate=38400, timeout=3)
 
         #self.write("ATZ")
         #self.write("ATSP0")
@@ -19,10 +19,10 @@ class ELM327:
         self.ser.write(text + "\r")
 
     def readlines(self):
-        return self.ser.readline().split('\r')
+        return self.ser.readline().split("\r")
 
     def at_read(self):
-        return self.readlines()[-3]
+        return self.readlines()
 
     def at_command(self, request):
         self.write(request)
@@ -30,7 +30,7 @@ class ELM327:
 
     def data_request(self, request):
         self.write(request)
-        return self.readlines()[-1][2:]
+        return self.readlines()
 
     def getRPM(self):
         data = self.data_request("010c")
@@ -44,9 +44,6 @@ if __name__ == "__main__":
     device = ELM327()
     print(device.at_command("ATZ"))
     print(device.at_command("ATSP0"))
-
-    for i in range(5):
-        print("RPM = {}".format(device.getRPM()))
-        time.sleep(1)
+    print(device.data_request("010c"))
 
 
