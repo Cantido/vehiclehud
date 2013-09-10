@@ -1,5 +1,3 @@
-language: c
+language: python
 
-before_script: autoreconf --install
-
-script: ./configure && make
+script: nosetests src/tests.py
