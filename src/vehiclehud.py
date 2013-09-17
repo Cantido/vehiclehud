@@ -38,10 +38,6 @@ class ELM327:
         self.write(request)
         return self.at_read()
 
-    def data_request(self, request):
-        self.write(request)
-        return self.readlines()
-
     def disable_space_printing(self):
         self.write("ATS0")
 
@@ -72,7 +68,7 @@ class ELM327:
         request_pid = int(request[2:4], 16)
         
         self.write(request)
-        data = device.readlines()[2]
+        data = self.readlines()[2]
         if "UNABLE TO CONNECT" in data:
             raise Exception("Unable to connect to the vehicle")
 
@@ -86,11 +82,11 @@ class ELM327:
         return response_payload
         
     def get_engine_rpm(self):
-        data = self.data_request("010c")
+        data = self.get_data("010c")
         return int(data, 16) / 4
 
     def get_vehicle_speed(self):
-        data = self.data_request("010d")
+        data = self.get_data("010d")
         return int(data, 16)
 
 if __name__ == "__main__":
