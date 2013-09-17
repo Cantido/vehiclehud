@@ -4,12 +4,12 @@ import sys
 import time
 
 class ELM327:
-    def __init__(self):
-        if sys.platform == "win32":
-            port = "COM4"
-        elif sys.platform == "linux2":
-            port = "/dev/ttyUSB0"
-            
+    def connect(self, port=None):
+        if port == None:
+            if sys.platform == "win32":
+                port = "COM4"
+            elif sys.platform == "linux2":
+                port = "/dev/ttyUSB0"
         self.ser = serial.Serial(port,baudrate=38400, timeout=1)
         self.sio = io.TextIOWrapper(io.BufferedRWPair(self.ser, self.ser), encoding="ASCII", newline="\r", line_buffering=True)
 
