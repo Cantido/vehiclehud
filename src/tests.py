@@ -11,7 +11,7 @@ import vehiclehud
 class TestInitialize(unittest.TestCase):
     def runTest(self):
         device = vehiclehud.ELM327()
-        with self.assertRaises(serial.SerialException)
+        with self.assertRaises(serial.SerialException):
             device.connect()
 
 if __name__ == "__main__":
