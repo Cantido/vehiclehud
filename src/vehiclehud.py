@@ -91,18 +91,15 @@ class ELM327:
         this method returns, if the given PID requests an integer value.
         """
         self.assert_connected()
-        request_mode = int(request[0:2], 16)
-        request_pid = int(request[2:4], 16)
+        request_mode, request_pid, request_payload = self.split_obd_string(request)
         
         self.write(request)
-        data = self.readlines()[0]
-        if "UNABLE TO CONNECT" in data:
+        response = self.readlines()[0]
+        if "UNABLE TO CONNECT" in response:
             raise VehicleHUDException(
                 """The ELM327 is unable to communicate with the vehicle""")
 
-        response_mode = int(data[0:2], 16)
-        response_pid = int(data[2:4], 16)
-        response_payload = data[4:]
+        response_mode, response_pid, response_payload = self.split_obd_string(response)
 
         if not (request_mode == response_mode - 0x40):
             raise VehicleHUDException(
@@ -114,6 +111,12 @@ class ELM327:
                 recieved {:#04x}""".format(request_pid, response_pid))
         
         return response_payload
+    
+    def split_obd_string(self, obd_string):
+        mode = int(obd_string[0:2], 16)
+        pid = int(obd_string[2:4], 16)
+        payload = obd_string[4:]
+        return [mode, pid, payload]
 
     def assert_connected(self):
         """Raise an exception if a connection to the ELM327 has not been
