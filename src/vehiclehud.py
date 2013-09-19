@@ -10,9 +10,14 @@ class ELM327:
                 port = "COM5"
             elif sys.platform == "linux2":
                 port = "/dev/ttyUSB0"
-        self.ser = serial.Serial(port,baudrate=38400, timeout=0.09)
-        self.sio = io.TextIOWrapper(io.BufferedRWPair(self.ser, self.ser), encoding="ASCII", newline="\r", line_buffering=True)
-
+        try:
+            self.ser = serial.Serial(port,baudrate=38400, timeout=0.09)
+            self.sio = io.TextIOWrapper(io.BufferedRWPair(self.ser, self.ser), encoding="ASCII", newline="\r", line_buffering=True)
+        except serial.SerialException as e:
+            raise VehicleHUDException("Cannot connect to ELM327: {}".format(e.message))
+        finally:
+            self.close()
+        
     def config(self):
         """Apply the default device configurations"""
         self.disable_space_printing()
@@ -20,7 +25,11 @@ class ELM327:
         self.enable_aggressive_timing()
 
     def isOpen(self):
-        return self.ser.isOpen() and not self.sio.closed
+        try:
+            connection_open = self.ser.isOpen() and not self.sio.closed
+        except AttributeError:
+            return False
+        return connection_open
 
     def close(self):
         try:
@@ -57,6 +66,8 @@ class ELM327:
         response = self.readlines()
         voltage = response[0][:-1] # Strip the trailing "V"
         return float(voltage)
+    get_battery_voltage.title = "battery voltage"
+    get_battery_voltage.unit ="V"
     
     def disable_space_printing(self):
         self.at_command("ATS0")
@@ -78,13 +89,15 @@ class ELM327:
         It should be possible to parse an integer straight from the data
         this method returns, if the given PID requests an integer value.
         """
+        self.assert_connected()
         request_mode = int(request[0:2], 16)
         request_pid = int(request[2:4], 16)
         
         self.write(request)
         data = self.readlines()[0]
         if "UNABLE TO CONNECT" in data:
-            raise Exception("Unable to connect to the vehicle")
+            raise VehicleHUDException(
+                """The ELM327 is unable to communicate with the vehicle""")
 
         response_mode = int(data[0:2], 16)
         response_pid = int(data[2:4], 16)
@@ -92,17 +105,28 @@ class ELM327:
         
         return response_payload
 
+    def assert_connected(self):
+        """Raise an exception if a connection to the ELM327 has not been
+        established"""
+        if not self.isOpen():
+            raise VehicleHUDException(
+                """The ELM327 is not connected""")
+
     def get_engine_load(self):
-        """Return the engine load value, as a fraction [0, 1]"""
+        """Return the engine load value, as a percentage"""
         data = self.get_data("0104")
-        load = int(data, 16) / 255.0
+        load = int(data, 16) * 100 / 255.0
         return load
+    get_engine_load.title = "engine load"
+    get_engine_load.unit = "%"
 
     def get_engine_coolant_temp(self):
         """Return the engine coolant temperature, in degrees Celcius"""
         data = self.get_data("0105")
         temp = int(data, 16) - 40
         return temp
+    get_engine_coolant_temp.title = "engine coolant temperature"
+    get_engine_coolant_temp.unit = u"\u00b0C" # \u00b0 is the degree symbol
     
     def get_engine_rpm(self):
         """Return the engine's RPM, in revolutions per minute, with a
@@ -110,18 +134,24 @@ class ELM327:
         data = self.get_data("010c")
         rpm = int(data, 16) / 4.0
         return rpm
+    get_engine_rpm.title = "engine RPM"
+    get_engine_rpm.unit = "RPM"
 
     def get_vehicle_speed(self):
         """Return the vehicle speed, in kilometers per hour"""
         data = self.get_data("010d")
         speed = int(data, 16)
         return speed
+    get_vehicle_speed.title = "vehicle speed"
+    get_vehicle_speed.unit = "km/h"
 
     def get_intake_temp(self):
         """Return the intake air temperature, in degrees celcius"""
         data = self.get_data("010f")
         intake_temp = int(data) - 40
         return intake_temp
+    get_intake_temp.title = "intake temperature"
+    get_intake_temp.unit = u"\u00b0C" # \u00b0 is the degree symbol
 
     def get_maf_airflow(self):
         """Get the rate of air flow as measured by the MAF sensor, in
@@ -129,18 +159,27 @@ class ELM327:
         data = self.get_data("0110");
         airflow = int(data, 16) / 100.0
         return airflow
+    get_maf_airflow.title = "airflow"
+    get_maf_airflow.unit = "g/s"
         
     def get_throttle_position(self):
-        """Return the throttle position, as a fraction [0, 1]"""
+        """Return the throttle position, as a percentage"""
         data = self.get_data("0111")
-        throttle_pos = int(data, 16) / 255.0
+        throttle_pos = int(data, 16) * 100 / 255.0
         return throttle_pos
+    get_throttle_position.title = "throttle position"
+    get_throttle_position.unit = "%"
 
     def get_fuel_level(self):
-        """Return the vehicle's fuel level, as a fraction of full [0, 1]"""
+        """Return the vehicle's fuel level, as a percentage"""
         data = self.get_data("012f")
-        fuel_level = int(data, 16) / 255.0
+        fuel_level = int(data, 16) * 100 / 255.0
         return fuel_level
+    get_fuel_level.title = "fuel level"
+    get_fuel_level.unit = "%"
+
+class VehicleHUDException(Exception):
+    pass
 
 def demonstrate():
     try:
