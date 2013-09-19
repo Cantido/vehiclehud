@@ -251,6 +251,9 @@ $RECYCLE.BIN/
 
 *.py[co]
 
+# IDLE files
+.idlerc/
+
 # Packages
 *.egg
 *.egg-info
