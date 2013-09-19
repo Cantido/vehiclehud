@@ -20,6 +20,7 @@ class ELM327:
         
     def config(self):
         """Apply the default device configurations"""
+        self.assert_connected()
         self.disable_space_printing()
         self.disable_command_echo()
         self.enable_aggressive_timing()
@@ -102,6 +103,15 @@ class ELM327:
         response_mode = int(data[0:2], 16)
         response_pid = int(data[2:4], 16)
         response_payload = data[4:]
+
+        if not (request_mode == response_mode - 0x40):
+            raise VehicleHUDException(
+                """ELM327 did not respond as expected: Expected mode {} but
+                recieved {}""".format(request_mode + 0x40, response_mode))
+        if not (request_pid == response_pid):
+            raise VehicleHUDException(
+                """ELM327 did not respond as expected: Expected pid {} but
+                recieved {}""".format(request_pid, response_pid))
         
         return response_payload
 
