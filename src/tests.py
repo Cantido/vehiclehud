@@ -8,32 +8,50 @@ import unittest
 
 import vehiclehud
 
-class MockSerial:
+class MockDevice(vehiclehud.ELM327):
     speed_str = "55" # 0x05
     expected_return = ""
+
+    def connect(self):
+        pass
+
+    def config(self):
+        pass
+    
+    def isOpen(self):
+        return True
+
+    def assert_connected(self):
+        pass
     
     def readline(self):
-        return "{}\r\r>".format(MockSerial.expected_return)
+        return "{}\r\r>".format(MockDevice.expected_return)
+
+    def readlines(self):
+        return self.readline().split("\r")
 
     def write(self, text):
-        if text.lower() == "010d\r":
-            MockSerial.expected_return = str("410D" + MockSerial.speed_str) 
+        if text.lower() == "010d":
+            MockDevice.expected_return = str("410D" + MockDevice.speed_str) 
         
 class TestInitialize(unittest.TestCase):
-    def runTest(self):
+    def test_connect(self):
         device = vehiclehud.ELM327()
-        with self.assertRaises(serial.SerialException):
+        with self.assertRaises(vehiclehud.VehicleHUDException):
             device.connect()
+
+    def test_config(self):
+        device = vehiclehud.ELM327()
+        with self.assertRaises(vehiclehud.VehicleHUDException):
+            device.config()
 
 class TestOBDRequest(unittest.TestCase):
     def setUp(self):
-        self.device = vehiclehud.ELM327()
-        self.device.ser = MockSerial()
-        self.device.sio = MockSerial()
+        self.device = MockDevice()
         
     def runTest(self):
         speed = self.device.get_vehicle_speed()
-        self.assertEquals(speed, int(MockSerial.speed_str, 16))
+        self.assertEquals(speed, int(MockDevice.speed_str, 16))
 
 if __name__ == "__main__":
     unittest.main(exit=False)
