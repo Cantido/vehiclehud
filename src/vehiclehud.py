@@ -106,12 +106,12 @@ class ELM327:
 
         if not (request_mode == response_mode - 0x40):
             raise VehicleHUDException(
-                """ELM327 did not respond as expected: Expected mode {} but
-                recieved {}""".format(request_mode + 0x40, response_mode))
+                """ELM327 did not respond as expected: Expected mode {:#04x} but
+                recieved {:#04x}""".format(request_mode + 0x40, response_mode))
         if not (request_pid == response_pid):
             raise VehicleHUDException(
-                """ELM327 did not respond as expected: Expected pid {} but
-                recieved {}""".format(request_pid, response_pid))
+                """ELM327 did not respond as expected: Expected PID {:#04x} but
+                recieved {:#04x}""".format(request_pid, response_pid))
         
         return response_payload
 
