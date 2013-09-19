@@ -13,7 +13,7 @@ class MockSerial:
     expected_return = ""
     
     def readline(self):
-        return ">echoed command \r empty line \r{}\r".format(MockSerial.expected_return)
+        return "{}\r\r>".format(MockSerial.expected_return)
 
     def write(self, text):
         if text.lower() == "010d\r":
