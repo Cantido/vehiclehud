@@ -1,39 +1,28 @@
-import vehiclehud
+from vehiclehud import *
 
-class DisplayMode:
-    def __init__(self, device):
-        if device:
-            self.device = device
-            
+class DisplayMode:      
     def draw(self):
         for func in self.data_funcs:
-            print("{}: {} {}".format(func.title, func(), func.unit))
+            print(u"{}: {} {}".format(func.title, func(), func.unit.encode("utf-8")))
 
 class BasicMode1(DisplayMode):
     def __init__(self, device):
         DisplayMode.__init__(self, device)
-        self.data_funcs = [device.get_vehicle_speed,
-                           device.get_engine_rpm]
+        self.data_funcs = [VehicleSpeed, EngineRPM]
 
 class BasicMode2(DisplayMode):
     def __init__(self, device):
         DisplayMode.__init__(self, device)
-        self.data_funcs = [device.get_vehicle_speed,
-                           device.get_engine_rpm,
-                           device.get_fuel_level,
-                           device.get_intake_temp]
+        self.data_funcs = [VehicleSpeed, EngineRPM, FuelLevel, IntakeTemp]
 
 class TunerMode(DisplayMode):
     def __init__(self, device):
         DisplayMode.__init__(self, device)
-        self.data_funcs = [device.get_engine_rpm,
-                           device.get_engine_load,
-                           device.get_throttle_position,
-                           device.get_maf_airflow]
+        self.data_funcs = [EngineRPM, EngineLoad, ThrottlePosition, MAFAirflow]
 
 if __name__ == "__main__":
-    device = vehiclehud.ELM327()
-    display = BasicMode1(device)
+    obd = OBD()
+    display = BasicMode2()
 
     for i in range(5):
         display.draw()

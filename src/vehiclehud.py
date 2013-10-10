@@ -3,6 +3,15 @@ import serial
 import sys
 import time
 
+def obd_connect(device=None):
+    if device:
+        obd = OBD(device)
+    else:
+        obd = OBD()
+
+def obd_close():
+    obd.close()
+
 class ELM327:
     def connect(self, port=None):
         if port == None:
@@ -11,12 +20,10 @@ class ELM327:
             elif sys.platform == "linux2":
                 port = "/dev/ttyUSB0"
         try:
-            self.ser = serial.Serial(port,baudrate=38400, timeout=0.09)
+            self.ser = serial.Serial(port,baudrate=38400, timeout=0.5)
             self.sio = io.TextIOWrapper(io.BufferedRWPair(self.ser, self.ser), encoding="ASCII", newline="\r", line_buffering=True)
         except serial.SerialException as e:
             raise VehicleHUDException("Cannot connect to ELM327: {}".format(e.message))
-        finally:
-            self.close()
         
     def config(self):
         """Apply the default device configurations"""
@@ -50,7 +57,7 @@ class ELM327:
 
     def at_command(self, request):
         self.write(request)
-        time.sleep(0.5)
+        time.sleep(1)
         return self.readlines()
 
     def enable_aggressive_timing(self):
@@ -125,71 +132,147 @@ class ELM327:
             raise VehicleHUDException(
                 """The ELM327 is not connected""")
 
-    def get_engine_load(self):
+class OBDData:
+    pid = ""
+    supported = False
+    title = ""
+    unit = ""
+    @staticmethod
+    def get():
+        pass
+
+class EngineLoad(OBDData):
+    pid = "0104"
+    title = "engine load"
+    unit = "%"
+    @staticmethod
+    def get():
         """Return the engine load value, as a percentage"""
-        data = self.get_data("0104")
+        data = self.get_data(EngineLoad.pid)
         load = int(data, 16) * 100 / 255.0
         return load
-    get_engine_load.title = "engine load"
-    get_engine_load.unit = "%"
 
-    def get_engine_coolant_temp(self):
-        """Return the engine coolant temperature, in degrees Celcius"""
-        data = self.get_data("0105")
+class CoolantTemp(OBDData):
+    pid = "0105"
+    title = "engine coolant temperature"
+    unit = u"\N{DEGREE SIGN}C"
+    @staticmethod
+    def get():
+        data = self.get_data(CoolantTemp.pid)
         temp = int(data, 16) - 40
         return temp
-    get_engine_coolant_temp.title = "engine coolant temperature"
-    get_engine_coolant_temp.unit = u"\u00b0C" # \u00b0 is the degree symbol
-    
-    def get_engine_rpm(self):
+
+class EngineRPM(OBDData):
+    pid = "010c"
+    title = "engine RPM"
+    unit = "RPM"
+    @staticmethod
+    def get():
         """Return the engine's RPM, in revolutions per minute, with a
         resolution of 0.25 of a revolution"""
-        data = self.get_data("010c")
+        data = OBD.get_data(EngineRPM.pid)
         rpm = int(data, 16) / 4.0
         return rpm
-    get_engine_rpm.title = "engine RPM"
-    get_engine_rpm.unit = "RPM"
 
-    def get_vehicle_speed(self):
+class VehicleSpeed(OBDData):
+    pid = "010d"
+    title = "vehicle speed"
+    unit = "km/h"
+    @staticmethod
+    def get():
         """Return the vehicle speed, in kilometers per hour"""
-        data = self.get_data("010d")
+        data = OBD.get_data(VehicleSpeed.pid)
         speed = int(data, 16)
         return speed
-    get_vehicle_speed.title = "vehicle speed"
-    get_vehicle_speed.unit = "km/h"
 
-    def get_intake_temp(self):
+class IntakeTemp(OBDData):
+    pid = "010f"
+    title = "intake temperature"
+    unit = u"\N{DEGREE SIGN}C"
+    @staticmethod
+    def get():
         """Return the intake air temperature, in degrees celcius"""
-        data = self.get_data("010f")
-        intake_temp = int(data) - 40
+        data = self.get_data(IntakeTemp.pid)
+        intake_temp = int(data, 16) - 40
         return intake_temp
-    get_intake_temp.title = "intake temperature"
-    get_intake_temp.unit = u"\u00b0C" # \u00b0 is the degree symbol
 
-    def get_maf_airflow(self):
+class MAFAirflow(OBDData):
+    pid = "0110"
+    title = "airflow"
+    unit = "g/s"
+    @staticmethod
+    def get():
         """Get the rate of air flow as measured by the MAF sensor, in
         grams per second"""
-        data = self.get_data("0110");
+        data = self.get_data(MAFAirflow.pid);
         airflow = int(data, 16) / 100.0
         return airflow
-    get_maf_airflow.title = "airflow"
-    get_maf_airflow.unit = "g/s"
-        
-    def get_throttle_position(self):
+
+class ThrottlePosition(OBDData):
+    pid = "0111"
+    title = "throttle position"
+    unit = "%"
+    @staticmethod
+    def get():
         """Return the throttle position, as a percentage"""
-        data = self.get_data("0111")
+        data = self.get_data(ThrottlePosition.pid)
         throttle_pos = int(data, 16) * 100 / 255.0
         return throttle_pos
-    get_throttle_position.title = "throttle position"
-    get_throttle_position.unit = "%"
 
+class FuelLevel(OBDData):
+    pid = "012f"
+    title = "fuel level"
+    unit = "%"
     def get_fuel_level(self):
         """Return the vehicle's fuel level, as a percentage"""
-        data = self.get_data("012f")
+        data = self.get_data(FuelLevel.pid)
         fuel_level = int(data, 16) * 100 / 255.0
         return fuel_level
-    get_fuel_level.title = "fuel level"
-    get_fuel_level.unit = "%"
+
+class BatteryVoltage(OBDData):
+    title = "battery voltage"
+    unit ="V"
+    supported = True
+    def get():
+        return OBD.device.get_battery_voltage()
+
+class OBD:
+    device = None
+    
+    def __init__(self, device=None):
+        if device:
+            OBD.device = device
+        else:
+            OBD.device = ELM327()
+            OBD.device.connect()
+            OBD.device.config()
+        self.update_supported_pids()
+
+    def close(self):
+        OBD.device.close()
+
+
+    @staticmethod
+    def update_supported_pids():
+        supp_pid_hex = self.get_data("0100")
+        OBD.supported_pids = bin(int(supp_pid_hex, 16))[2:].zfill(32)
+
+    @staticmethod
+    def assert_supported(pid):
+        if not OBD.pid_supported(pid):
+            raise VehicleHUDException("The PID {} is not supported by this vehicle".format(pid))
+
+    @staticmethod
+    def pid_supported(pid):
+        index = pid[2:]
+        is_pid_supported = OBD.supported_pids[index] == "1"
+        return is_pid_supported
+
+    @staticmethod
+    def get_data(request):
+        OBD.assert_supported(request)
+        return OBD.device.get_data(request)
+
 
 class VehicleHUDException(Exception):
     pass
@@ -199,18 +282,21 @@ def demonstrate():
         device = ELM327()
         device.connect()
         device.config()
+        obd = OBD(device)
+        
         for i in range(10):
             try:
-                rpm = device.get_engine_rpm()
-                speed = device.get_vehicle_speed()
+                rpm = obd.get_engine_rpm()
+                speed = obd.get_vehicle_speed()
                 print("Vehicle RPM: {} rev/min".format(rpm))
                 print("Vehicle speed: {} km/h".format(speed))
             except ValueError:
-                pass
+                print("Couldn't print on this pass")
     finally:
         device.close()
 
 if __name__ == "__main__":
     from tests import *
     unittest.main(exit=False)
+    #demonstrate()
 

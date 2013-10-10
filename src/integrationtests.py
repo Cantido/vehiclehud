@@ -20,30 +20,29 @@ def tearDownModule():
     close_device()
 
 def connect_to_device():
-    device.connect()
-    device.config()
+    obd_connect()
 
 def close_device():
-    device.close()
+    obd_close
 
 class TestInitialize(unittest.TestCase):
     def runTest(self):
-        self.assertTrue(device.isOpen())
+        self.assertTrue(OBD.device.isOpen())
 
 class TestGetSpeed(unittest.TestCase):
     def runTest(self):
-        speed = device.get_vehicle_speed()
+        speed = VehicleSpeed.get()
         self.assertEqual(speed, 0)
 
 class TestGetRPM(unittest.TestCase):
     def runTest(self):
-        rpm = device.get_engine_rpm()
+        rpm = EngineRPM.get()
         self.assertGreater(rpm, 0)
 
 class TestPerformance(unittest.TestCase):
     def runTest(self):
         start_time = time.time()
-        device.get_vehicle_speed()
+        VehicleSpeed.get()
         end_time = time.time()
         exec_time = end_time - start_time
         self.assertLess(exec_time, 0.5)
