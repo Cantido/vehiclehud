@@ -1,36 +1,41 @@
 \section{Executive Summary}
 
-The team will design a heads-up display for use in automotive applications.
-This device should be able to display vehicle information onto the
-windshield of a vehicle. This would allow a driver to maintain eye contact
+We have designed a heads-up display for use in automotive applications.
+This device can project vehicle information onto the
+windshield of a vehicle, allowing a driver to maintain eye contact
 with the road while also viewing vehicle speed, engine information, and
-even GPS displays.
+several other data points.
 
-The main goal of this project will be to develop a display that can
+The main goal of this project was to develop a display that can
 effectively show vehicle information onto the windshield regardless of
-lighting conditions. Ideally, the display will also be universal, that is
-it will work with most makes and models of cars and be able to display on
-different types of windshields without modification. Depending on time and
-financial constraints, the display may interface with GPS, infotainment,
-and augmented reality products.
+lighting conditions. Ideally, the display would also be universal, being able
+to work with most makes and models of cars and be able to display on
+different types of windshields without modification. The device is also
+easy to extend, relying on open-source software and commonly-used components.
 
-Major goals include:
+The device has three major subunits:
 
 \begin{description}
-\item[Gather Data] We must gather information from the vehicle. This will
-mostly like be done using the on-board communication options available on
-most cars (either OBD-II or CAN bus). Optional data-gathering elements
-include GPS chips and Wi-Fi cards.
-\item[Process Data]Some sort of processing element must collect information
-from the various data-gathering elements and process it for display.
-\item[Display Data]Display options include laser projectors and LED/LCD
-screens. A majority of the research in this section will concern how
-projection systems will interact with automotive windshields and the safety
-thereof.
+\item[Data Gathering] The device gathers information from the
+vehicle using the vehicle's on-board diagnostic jack (OBD jack). This jack
+provides a large amount of data beyond the straightforward vehicle speed and
+engine RPM. The OBD system is based upon legally-obligated standards and is
+available in all modern vehicles.
+\item[Data Processing] The device uses a Raspberry Pi computer for high-level
+control and data processing. The Raspberry Pi coordinates the display and
+data gathering subunits and also provides a platform for further additions to
+the system. 
+\item[Data Display] The device uses a vacuum-fluorescent display (VFD) to
+display information. Images from the VFD will be projected through a series of
+focusing devices in order to be reflected on to the vehicle's windshield while
+also properly focusing the light to reduce the driver's eye strain.
 \end{description}
 
-A team of two will work on this project. Aaron Hall decided on the project
-and requirements, and as an Electrical Engineering major his focus will be
-on power and component integration. Robert Richter, a Computer Engineering
-major, will develop the software for the system and assist Aaron in
-integrating the components at a low software level.
+A team of two has worked on this project:
+
+\begin{description}
+\item[Aaron Hall] decided on the project and requirements, and as an Electrical
+Engineering major his focus has been on power and component integration.
+\item[Robert Richter,] a Computer Engineering
+major, has developed the software and assisted Aaron in integrating the system.
+\end{description}
