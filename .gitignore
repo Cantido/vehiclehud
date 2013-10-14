@@ -250,22 +250,26 @@ $RECYCLE.BIN/
 ## Python
 #############
 
-*.py[co]
+*.py[cod]
 
-# IDLE files
-.idlerc/
+# C extensions
+*.so
 
 # Packages
 *.egg
 *.egg-info
-dist/
-build/
-eggs/
-parts/
-var/
-sdist/
-develop-eggs/
+dist
+build
+eggs
+parts
+bin
+var
+sdist
+develop-eggs
 .installed.cfg
+lib
+lib64
+__pycache__
 
 # Installer logs
 pip-log.txt
@@ -273,12 +277,15 @@ pip-log.txt
 # Unit test / coverage reports
 .coverage
 .tox
+nosetests.xml
 
-#Translations
+# Translations
 *.mo
 
-#Mr Developer
+# Mr Developer
 .mr.developer.cfg
+.project
+.pydevproject
 
 ##############
 ## LaTeX
