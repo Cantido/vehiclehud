@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # Compiled source #
 ###################
 *.com
@@ -7,6 +6,7 @@
 *.exe
 *.o
 *.so
+*.pdf
 
 # Packages #
 ############
@@ -250,19 +250,26 @@ $RECYCLE.BIN/
 ## Python
 #############
 
-*.py[co]
+*.py[cod]
+
+# C extensions
+*.so
 
 # Packages
 *.egg
 *.egg-info
-dist/
-build/
-eggs/
-parts/
-var/
-sdist/
-develop-eggs/
+dist
+build
+eggs
+parts
+bin
+var
+sdist
+develop-eggs
 .installed.cfg
+lib
+lib64
+__pycache__
 
 # Installer logs
 pip-log.txt
@@ -270,10 +277,48 @@ pip-log.txt
 # Unit test / coverage reports
 .coverage
 .tox
+nosetests.xml
 
-#Translations
+# Translations
 *.mo
 
-#Mr Developer
+# Mr Developer
 .mr.developer.cfg
->>>>>>> 0c101f0910606ea4519c2bb26fe38e61fb901d50
+.project
+.pydevproject
+
+##############
+## LaTeX
+##############
+*.acn
+*.acr
+*.alg
+*.aux
+*.bbl
+*.blg
+*.dvi
+*.fdb_latexmk
+*.glg
+*.glo
+*.gls
+*.idx
+*.ilg
+*.ind
+*.ist
+*.lof
+*.log
+*.lot
+*.maf
+*.mtc
+*.mtc0
+*.nav
+*.nlo
+*.out
+*.pdfsync
+*.ps
+*.snm
+*.synctex.gz
+*.toc
+*.vrb
+*.xdy
+*.tdo
