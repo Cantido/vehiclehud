@@ -119,8 +119,7 @@ int main()
 	int n = 0, x = 0;	//ints for keeping track of received/parsed bits
 	long int A = 0, B = 0, C = 0, D = 0;	//translated bytes from the OBD chip
 	int RPM = 0;		//calculated engine RPM
-	char buf[50];		//buffer to store raw characters received from the OBD chip
-	char buf2[50];		//buffer to store parsed characters
+	char buf[50];
 	char *pEnd;		//pointer for parsing OBD bytes
 
 	memset(buf, 0, sizeof buf);	//clear the buffer
@@ -143,8 +142,8 @@ int main()
 
 	printf("Making sure chip is working...\n");
 	do {
-		obd_read(fd, buf2, 10);
-	} while (!strcmp(buf2, "ON"));
+		obd_read(fd, buf, 10);
+	} while (!strcmp(buf, "ON"));
 
 	//ready to go
 	printf("OBD Ready\n");
@@ -168,16 +167,16 @@ int main()
 		write(fd, "010C 1\r", 7);
 
 		//read the response
-		x = obd_read(fd, buf2, 13);
+		x = obd_read(fd, buf, 13);
 
-		printf("Recieved data: %s\n", buf2);
+		printf("Recieved data: %s\n", buf);
 
-		if (!strcmp("STOPPED", buf2))
+		if (!strcmp("STOPPED", buf))
 			printf("STOPPED\n");
 
 		//if we got a proper RPM string, calculate and print RPM
 		if (x == 12) {
-			A = strtol(buf2, &pEnd, 16);
+			A = strtol(buf, &pEnd, 16);
 			B = strtol(pEnd, &pEnd, 16);
 			C = strtol(pEnd, &pEnd, 16);
 			D = strtol(pEnd, &pEnd, 16);
