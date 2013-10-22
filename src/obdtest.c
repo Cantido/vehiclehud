@@ -139,11 +139,8 @@ int main()
 {
     int fd = obd_open();
 
-	int n = 0, x = 0;	//ints for keeping track of received/parsed bits
-	long int A = 0, B = 0, C = 0, D = 0;	//translated bytes from the OBD chip
 	int RPM = 0;		//calculated engine RPM
 	char buf[50];
-	char *pEnd;		//pointer for parsing OBD bytes
 
 	memset(buf, 0, sizeof buf);	//clear the buffer
 
