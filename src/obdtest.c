@@ -100,7 +100,8 @@ void set_baud_115200(int fd)
 	usleep(1000000);
 }
 
-int obd_open() {
+int obd_open()
+{
 	int fd = open(PORTNAME, O_RDWR | O_NOCTTY | O_SYNC);
 	if (fd < 0) {
 		printf("error %s opening %s: %s", strerror(errno), PORTNAME,
@@ -110,73 +111,77 @@ int obd_open() {
 
 	set_interface_attribs(fd, B38400, 0);	// set speed to 38,400 bps, 8n1 (no parity)
 	set_blocking(fd, 0);	// set no blocking
-    
-    return fd;
+
+	return fd;
 }
 
-void obd_wait_until_on(int fd) {
-    int max_iter = 100;
-    char buf[50];
-    
-    for(int i = 0; i < max_iter; i++) {
+void obd_wait_until_on(int fd)
+{
+	int max_iter = 100;
+	char buf[50];
+
+	for (int i = 0; i < max_iter; i++) {
 		obd_read(fd, buf, 10);
-        if(strstr(buf, "ON") == NULL) {
-            return;
-        }
-        usleep(1000);
-    }
-    printf("Device was not ready in an acceptable amount of time\n");
-    exit(EXIT_FAILURE);
+		if (strstr(buf, "ON") == NULL) {
+			return;
+		}
+		usleep(1000);
+	}
+	printf("Device was not ready in an acceptable amount of time\n");
+	exit(EXIT_FAILURE);
 }
 
-void obd_reset(int fd) {
-    write(fd, "ATZ\r", 4);
+void obd_reset(int fd)
+{
+	write(fd, "ATZ\r", 4);
 
 	//wait for the chip to reset
 	usleep(1000000);
 }
 
-
-void obd_find_protocol(int fd) {
+void obd_find_protocol(int fd)
+{
 	write(fd, "0100\r", 5);
 	usleep(2000000);
 }
 
-void obd_enable_echo(int fd, int enable) {
-    if(enable == ENABLE) {
-        write(fd, "ATE1\r", 5);
-    } else {
-        write(fd, "ATE0\r", 5);
-    }
+void obd_enable_echo(int fd, int enable)
+{
+	if (enable == ENABLE) {
+		write(fd, "ATE1\r", 5);
+	} else {
+		write(fd, "ATE0\r", 5);
+	}
 }
 
-int get_rpm(int fd) {
-        int charsread;
-        char buf[50];
-        char *pEnd;
-        long int A = 0, B = 0, C = 0, D = 0;
-        int rpm;
-        
-		write(fd, "010C 1\r", 7);
-		charsread = obd_read(fd, buf, 13);
+int get_rpm(int fd)
+{
+	int charsread;
+	char buf[50];
+	char *pEnd;
+	long int A = 0, B = 0, C = 0, D = 0;
+	int rpm;
 
-		//if we got a proper RPM string, calculate and print RPM
-		if (charsread = 12) {
-			A = strtol(buf, &pEnd, 16);
-			B = strtol(pEnd, &pEnd, 16);
-			C = strtol(pEnd, &pEnd, 16);
-			D = strtol(pEnd, &pEnd, 16);
+	write(fd, "010C 1\r", 7);
+	charsread = obd_read(fd, buf, 13);
 
-			rpm = (C * 256 + D) / 4;
-		} else {
-			rpm = -1;
-		}
-    return rpm;
+	//if we got a proper RPM string, calculate and print RPM
+	if (charsread = 12) {
+		A = strtol(buf, &pEnd, 16);
+		B = strtol(pEnd, &pEnd, 16);
+		C = strtol(pEnd, &pEnd, 16);
+		D = strtol(pEnd, &pEnd, 16);
+
+		rpm = (C * 256 + D) / 4;
+	} else {
+		rpm = -1;
+	}
+	return rpm;
 }
 
 int main()
 {
-    int fd = obd_open();
+	int fd = obd_open();
 
 	int RPM = 0;		//calculated engine RPM
 	char buf[50];
@@ -185,14 +190,14 @@ int main()
 
 	printf("Resetting the chip...\n");
 	obd_reset(fd);
-    
-    printf("Finding a protocol...\n");
-    obd_find_protocol(fd);
+
+	printf("Finding a protocol...\n");
+	obd_find_protocol(fd);
 
 	//clear IO buffers
 	tcflush(fd, TCIOFLUSH);
-    
-    obd_enable_echo(fd, DISABLE);
+
+	obd_enable_echo(fd, DISABLE);
 
 	printf("Making sure chip is working...\n");
 	obd_wait_until_on(fd);
@@ -211,7 +216,7 @@ int main()
 
 		printf("Requesting RPM from OBD...\n");
 		RPM = get_rpm(fd);
-        
+
 		printf("RPM: %d\n", RPM);
 	}
 
