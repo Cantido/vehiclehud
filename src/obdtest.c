@@ -143,7 +143,7 @@ int main()
 
 	printf("Making sure chip is working...\n");
 	do {
-		obd_read(fd, buf, 10);
+		obd_read(fd, buf2, 10);
 	} while (!strcmp(buf2, "ON"));
 
 	//ready to go
