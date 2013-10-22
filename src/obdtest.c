@@ -98,8 +98,7 @@ void set_baud_115200(int fd)
 	usleep(1000000);
 }
 
-int main()
-{
+int obd_open() {
 	int fd = open(PORTNAME, O_RDWR | O_NOCTTY | O_SYNC);
 	if (fd < 0) {
 		printf("error %s opening %s: %s", strerror(errno), PORTNAME,
@@ -109,6 +108,13 @@ int main()
 
 	set_interface_attribs(fd, B38400, 0);	// set speed to 38,400 bps, 8n1 (no parity)
 	set_blocking(fd, 0);	// set no blocking
+    
+    return fd;
+}
+
+int main()
+{
+    int fd = obd_open();
 
 	int n = 0, x = 0;	//ints for keeping track of received/parsed bits
 	long int A = 0, B = 0, C = 0, D = 0;	//translated bytes from the OBD chip
