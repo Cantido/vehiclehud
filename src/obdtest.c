@@ -70,7 +70,6 @@ int obd_read(int fd, char *buf, size_t count)
 	int charsprocessed = 0;
 	char readbuf[50];
 	int charsread = read(fd, readbuf, count);
-	usleep(TIMEOUT);
 
 	//get rid of any worthless characters
 	for (int i = 0; i < charsread; ++i) {
