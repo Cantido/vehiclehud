@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include <cstdlib>
+#include <stdlib.h>
 #include <string.h>
 #include <fcntl.h>
 #include <errno.h>
@@ -7,7 +7,7 @@
 #include <unistd.h>
 #include <time.h>
 
-#define PORTNAME "/dev/rfcomm0"
+#define PORTNAME "/dev/ttyS3"
 
 int set_interface_attribs (int fd, int speed, int parity)
 {
@@ -72,8 +72,10 @@ void set_blocking (int fd, int should_block)
 int main()
 {
 	int fd = open (PORTNAME, O_RDWR | O_NOCTTY | O_SYNC);
-	if (fd < 0)
+	if (fd < 0) {
 	    printf("error %s opening %s: %s", strerror(errno), PORTNAME, strerror (errno));
+        exit(EXIT_FAILURE);
+    }
 
 	set_interface_attribs (fd, B38400, 0);  // set speed to 38,400 bps, 8n1 (no parity)
 	set_blocking (fd, 0);                	// set no blocking
@@ -87,8 +89,8 @@ int main()
 
 	memset (buf, 0, sizeof buf);	//clear the buffer
 
-	//reset the chip
-	write (fd, "ATZ\r", 4);		
+	printf("Resetting the chip...\n");
+	write (fd, "ATZ\r", 4);
 
 	//wait for the chip to reset
 	usleep(1000000);
@@ -103,7 +105,7 @@ int main()
 
 	usleep(1000000);
 
-	//ask the chip to find a protocol
+	printf("Finding a protocol...\n");
 	write (fd, "0100\r", 5);
 	usleep(2000000);
 
@@ -113,7 +115,7 @@ int main()
 	//disable echos
 	write (fd, "ATE0\r", 5);
 	
-	//make sure the chip is working
+	printf("Making sure chip is working...\n");
 	do
 	{
 		//clear the buffers
@@ -140,24 +142,28 @@ int main()
 		}
 		//terminate the parsed string
 		buf2[x+1] = '\0';
-	} while (strcmp(buf2, "ON"));
+	} while (!strcmp(buf2, "ON"));
 
 	//ready to go
 	printf ("OBD Ready\n");
 
 	//set the read to blocking
 	set_blocking (fd, 1);
+    
+    printf("Beginning RPM read cycle...\n");
 	
 	while (1)
 	{
+        printf("RPM read loop starting iteration...\n");
 		//pause to keep from overloading the OBD chip
-		usleep(50000);
+		usleep(1000000);
 		
 		//clear the buffers
 		//memset (buf, 0, sizeof buf);
 		//memset (buf2, 0, sizeof buf);
 		
 		//ask for RPM, tell the chip we only expect 1 line of data (should be faster)
+        printf("Requesting RPM from OBD...\n");
 		write (fd, "010C 1\r", 7);
 		
 		//read the response
@@ -175,8 +181,10 @@ int main()
 			}
 		}
 		
+        printf("Recieved data: %s\n", buf2);
 		
 		if (!strcmp("STOPPED", buf2)) printf ("STOPPED\n");
+        
 		
 		//if we got a proper RPM string, calculate and print RPM
 		if (x == 12)
@@ -188,7 +196,9 @@ int main()
 			
 			RPM = (C*256 + D)/4;
 			printf ("RPM: %d\n", RPM);
-		}
+		} else {
+            printf("Didn't get a length 12 string, length is %d\n", x);
+        }
 	}
 
 	return 0;
