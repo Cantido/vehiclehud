@@ -111,6 +111,30 @@ int obd_open() {
     return fd;
 }
 
+int get_rpm(int fd) {
+        int charsread;
+        char buf[50];
+        char *pEnd;
+        long int A = 0, B = 0, C = 0, D = 0;
+        int rpm;
+        
+		write(fd, "010C 1\r", 7);
+		charsread = obd_read(fd, buf, 13);
+
+		//if we got a proper RPM string, calculate and print RPM
+		if (charsread = 12) {
+			A = strtol(buf, &pEnd, 16);
+			B = strtol(pEnd, &pEnd, 16);
+			C = strtol(pEnd, &pEnd, 16);
+			D = strtol(pEnd, &pEnd, 16);
+
+			rpm = (C * 256 + D) / 4;
+		} else {
+			rpm = -1;
+		}
+    return rpm;
+}
+
 int main()
 {
     int fd = obd_open();
@@ -154,38 +178,12 @@ int main()
 
 	while (1) {
 		printf("RPM read loop starting iteration...\n");
-		//pause to keep from overloading the OBD chip
 		usleep(1000000);
 
-		//clear the buffers
-		//memset (buf, 0, sizeof buf);
-		//memset (buf2, 0, sizeof buf);
-
-		//ask for RPM, tell the chip we only expect 1 line of data (should be faster)
 		printf("Requesting RPM from OBD...\n");
-		write(fd, "010C 1\r", 7);
-
-		//read the response
-		x = obd_read(fd, buf, 13);
-
-		printf("Recieved data: %s\n", buf);
-
-		if (!strcmp("STOPPED", buf))
-			printf("STOPPED\n");
-
-		//if we got a proper RPM string, calculate and print RPM
-		if (x == 12) {
-			A = strtol(buf, &pEnd, 16);
-			B = strtol(pEnd, &pEnd, 16);
-			C = strtol(pEnd, &pEnd, 16);
-			D = strtol(pEnd, &pEnd, 16);
-
-			RPM = (C * 256 + D) / 4;
-			printf("RPM: %d\n", RPM);
-		} else {
-			printf("Didn't get a length 12 string, length is %d\n",
-			       x);
-		}
+		RPM = get_rpm(fd);
+        
+		printf("RPM: %d\n", RPM);
 	}
 
 	return 0;
