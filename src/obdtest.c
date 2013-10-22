@@ -10,6 +10,9 @@
 #define PORTNAME "/dev/ttyUSB0"
 #define TIMEOUT 500000
 
+#define DISABLE 0
+#define ENABLE 1
+
 int set_interface_attribs(int fd, int speed, int parity)
 {
 	struct termios tty;
@@ -111,6 +114,42 @@ int obd_open() {
     return fd;
 }
 
+void obd_wait_until_on(int fd) {
+    int max_iter = 100;
+    char buf[50];
+    
+    for(int i = 0; i < max_iter; i++) {
+		obd_read(fd, buf, 10);
+        if(strstr(buf, "ON") == NULL) {
+            return;
+        }
+        usleep(1000);
+    }
+    printf("Device was not ready in an acceptable amount of time\n");
+    exit(EXIT_FAILURE);
+}
+
+void obd_reset(int fd) {
+    write(fd, "ATZ\r", 4);
+
+	//wait for the chip to reset
+	usleep(1000000);
+}
+
+
+void obd_find_protocol(int fd) {
+	write(fd, "0100\r", 5);
+	usleep(2000000);
+}
+
+void obd_enable_echo(int fd, int enable) {
+    if(enable == ENABLE) {
+        write(fd, "ATE1\r", 5);
+    } else {
+        write(fd, "ATE0\r", 5);
+    }
+}
+
 int get_rpm(int fd) {
         int charsread;
         char buf[50];
@@ -145,25 +184,18 @@ int main()
 	memset(buf, 0, sizeof buf);	//clear the buffer
 
 	printf("Resetting the chip...\n");
-	write(fd, "ATZ\r", 4);
-
-	//wait for the chip to reset
-	usleep(1000000);
-
-	printf("Finding a protocol...\n");
-	write(fd, "0100\r", 5);
-	usleep(2000000);
+	obd_reset(fd);
+    
+    printf("Finding a protocol...\n");
+    obd_find_protocol(fd);
 
 	//clear IO buffers
 	tcflush(fd, TCIOFLUSH);
-
-	//disable echos
-	write(fd, "ATE0\r", 5);
+    
+    obd_enable_echo(fd, DISABLE);
 
 	printf("Making sure chip is working...\n");
-	do {
-		obd_read(fd, buf, 10);
-	} while (!strcmp(buf, "ON"));
+	obd_wait_until_on(fd);
 
 	//ready to go
 	printf("OBD Ready\n");
