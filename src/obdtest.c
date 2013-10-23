@@ -122,7 +122,7 @@ void obd_wait_until_on(int fd)
 
 	for (int i = 0; i < max_iter; i++) {
 		obd_read(fd, buf, 10);
-		if (strstr(buf, "ON") == NULL) {
+		if (strstr(buf, "ON") != NULL) {
 			return;
 		}
 		usleep(1000);
