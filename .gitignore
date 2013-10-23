@@ -39,7 +39,6 @@ config.status
 configure
 depcomp
 install-sh
-Makefile
 missing
 stamp-h1
 
