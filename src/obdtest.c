@@ -161,24 +161,24 @@ void obd_enable_echo(int fd, bool enable)
 		write(fd, "ATE0\r", 5);
 }
 
-long int* obd_get_bytes(int fd, size_t numbytes)
+long int *obd_get_bytes(int fd, size_t numbytes)
 {
 	int charsread;
 	char buf[50];
 	char *pEnd;
-	long int* byteptr;
-	
+	long int *byteptr;
+
 	size_t numspaces = numbytes - 1;
 	size_t numnewlines = 2;
 	size_t numchars = (numbytes * 2) + numspaces + numnewlines;
-	
+
 	charsread = obd_read(fd, buf, numchars);
 
 	if (charsread == numchars) {
 		byteptr = malloc(sizeof(short int) * numbytes);
-		
+
 		byteptr[0] = strtol(buf, &pEnd, 16);
-		for(short int i = 1; i < numbytes; i++) {
+		for (short int i = 1; i < numbytes; i++) {
 			byteptr[i] = strtol(pEnd, &pEnd, 16);
 		}
 	} else {
@@ -189,7 +189,7 @@ long int* obd_get_bytes(int fd, size_t numbytes)
 
 int get_rpm(int fd)
 {
-	long int* data;
+	long int *data;
 	long int C, D;
 	int rpm;
 
@@ -209,7 +209,7 @@ int get_rpm(int fd)
 
 int get_speed(int fd)
 {
-	long int* data;
+	long int *data;
 	int speed = 0;
 
 	write(fd, "010D 1\r", 7);
@@ -218,7 +218,7 @@ int get_speed(int fd)
 	if (data == NULL) {
 		speed = -1;
 	} else {
-		speed = (int) data[2];
+		speed = (int)data[2];
 	}
 	free(data);
 	return speed;
