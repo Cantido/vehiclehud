@@ -174,7 +174,7 @@ long int* obd_get_bytes(int fd, size_t numbytes)
 	
 	charsread = obd_read(fd, buf, numchars);
 
-	if (charsread = numchars) {
+	if (charsread == numchars) {
 		byteptr = malloc(sizeof(short int) * numbytes);
 		
 		byteptr[0] = strtol(buf, &pEnd, 16);
