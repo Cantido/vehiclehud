@@ -96,7 +96,6 @@ void set_baud_115200(int fd)
 	//change our baud rate and ack
 	set_interface_attribs(fd, B115200, 0);
 	write(fd, "\r", 1);
-
 	usleep(1000000);
 }
 
@@ -131,27 +130,32 @@ void obd_wait_until_on(int fd)
 	exit(EXIT_FAILURE);
 }
 
-void obd_reset(int fd)
+bool obd_reset(int fd)
 {
 	write(fd, "ATZ\r", 4);
-
-	//wait for the chip to reset
 	usleep(1000000);
+	if (obd_read(fd, buf, 11) >= 10)
+		return true;
+	else
+		return false;
 }
 
-void obd_find_protocol(int fd)
+bool obd_find_protocol(int fd)
 {
 	write(fd, "0100\r", 5);
 	usleep(2000000);
+	if (obd_read(fd, buf, 18) >= 17)
+		return true;
+	else
+		return false;	
 }
 
-void obd_enable_echo(int fd, int enable)
+void obd_enable_echo(int fd, bool enable)
 {
-	if (enable == ENABLE) {
+	if (enable) 
 		write(fd, "ATE1\r", 5);
-	} else {
+	else 
 		write(fd, "ATE0\r", 5);
-	}
 }
 
 int get_rpm(int fd)
@@ -179,11 +183,35 @@ int get_rpm(int fd)
 	return rpm;
 }
 
+int get_speed(int fd)
+{
+	int charsread;
+	char buf[50];
+	char *pEnd;
+	long int A = 0, B = 0, speed = 0;
+	
+	//ask for speed
+	write(fd, "010D 1\r", 7);
+	
+	//if we get a proper speed string, calculate and print RPM
+	if (obd_read(fd, buf, 9) == 9)
+	{
+		A = strtol(buf, &pEnd, 16);
+		B = strtol(pEnd, &pEnd, 16);
+		speed = strtol(pEnd, &pEnd, 16);		
+	} 
+	else
+		speed = -1;
+		
+	return speed;
+}	
+
 int main()
 {
 	int fd = obd_open();
 
 	int RPM = 0;		//calculated engine RPM
+	int speed = 0;		//vehicle speed
 	char buf[50];
 
 	memset(buf, 0, sizeof buf);	//clear the buffer
@@ -208,16 +236,14 @@ int main()
 	//set the read to blocking
 	set_blocking(fd, 1);
 
-	printf("Beginning RPM read cycle...\n");
-
-	while (1) {
-		printf("RPM read loop starting iteration...\n");
-		usleep(1000000);
-
-		printf("Requesting RPM from OBD...\n");
+	printf("Beginning read cycle...\n");
+	
+	while (1) 
+	{
 		RPM = get_rpm(fd);
+		speed = get_speed(fd);
 
-		printf("RPM: %d\n", RPM);
+		printf("RPM: %d\nSpeed: %d\n", RPM, speed);
 	}
 
 	return 0;
