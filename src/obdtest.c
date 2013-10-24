@@ -155,9 +155,9 @@ bool obd_find_protocol(int fd)
 
 void obd_enable_echo(int fd, bool enable)
 {
-	if (enable) 
+	if (enable)
 		write(fd, "ATE1\r", 5);
-	else 
+	else
 		write(fd, "ATE0\r", 5);
 }
 
@@ -192,22 +192,20 @@ int get_speed(int fd)
 	char buf[50];
 	char *pEnd;
 	long int A = 0, B = 0, speed = 0;
-	
+
 	//ask for speed
 	write(fd, "010D 1\r", 7);
-	
+
 	//if we get a proper speed string, calculate and print RPM
-	if (obd_read(fd, buf, 9) == 9)
-	{
+	if (obd_read(fd, buf, 9) == 9) {
 		A = strtol(buf, &pEnd, 16);
 		B = strtol(pEnd, &pEnd, 16);
-		speed = strtol(pEnd, &pEnd, 16);		
-	} 
-	else
+		speed = strtol(pEnd, &pEnd, 16);
+	} else
 		speed = -1;
-		
+
 	return speed;
-}	
+}
 
 int main()
 {
@@ -240,9 +238,8 @@ int main()
 	set_blocking(fd, 1);
 
 	printf("Beginning read cycle...\n");
-	
-	while (1) 
-	{
+
+	while (1) {
 		RPM = get_rpm(fd);
 		speed = get_speed(fd);
 
