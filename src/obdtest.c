@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
 #include <string.h>
 #include <fcntl.h>
 #include <errno.h>
@@ -132,6 +133,7 @@ void obd_wait_until_on(int fd)
 
 bool obd_reset(int fd)
 {
+	char buf[50];
 	write(fd, "ATZ\r", 4);
 	usleep(1000000);
 	if (obd_read(fd, buf, 11) >= 10)
@@ -142,12 +144,13 @@ bool obd_reset(int fd)
 
 bool obd_find_protocol(int fd)
 {
+	char buf[50];
 	write(fd, "0100\r", 5);
 	usleep(2000000);
 	if (obd_read(fd, buf, 18) >= 17)
 		return true;
 	else
-		return false;	
+		return false;
 }
 
 void obd_enable_echo(int fd, bool enable)
