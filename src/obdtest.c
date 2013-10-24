@@ -161,49 +161,66 @@ void obd_enable_echo(int fd, bool enable)
 		write(fd, "ATE0\r", 5);
 }
 
-int get_rpm(int fd)
+long int* obd_get_bytes(int fd, size_t numbytes)
 {
 	int charsread;
 	char buf[50];
 	char *pEnd;
-	long int A = 0, B = 0, C = 0, D = 0;
+	long int* byteptr;
+	
+	size_t numspaces = numbytes - 1;
+	size_t numnewlines = 2;
+	size_t numchars = (numbytes * 2) + numspaces + numnewlines;
+	
+	charsread = obd_read(fd, buf, numchars);
+
+	if (charsread = numchars) {
+		byteptr = malloc(sizeof(short int) * numbytes);
+		
+		byteptr[0] = strtol(buf, &pEnd, 16);
+		for(short int i = 1; i < numbytes; i++) {
+			byteptr[i] = strtol(pEnd, &pEnd, 16);
+		}
+	} else {
+		byteptr = NULL;
+	}
+	return byteptr;
+}
+
+int get_rpm(int fd)
+{
+	long int* data;
+	long int C, D;
 	int rpm;
 
 	write(fd, "010C 1\r", 7);
-	charsread = obd_read(fd, buf, 13);
+	data = obd_get_bytes(fd, 4);
 
-	//if we got a proper RPM string, calculate and print RPM
-	if (charsread = 12) {
-		A = strtol(buf, &pEnd, 16);
-		B = strtol(pEnd, &pEnd, 16);
-		C = strtol(pEnd, &pEnd, 16);
-		D = strtol(pEnd, &pEnd, 16);
-
-		rpm = (C * 256 + D) / 4;
-	} else {
+	if (data == NULL) {
 		rpm = -1;
+	} else {
+		C = data[2];
+		D = data[3];
+		rpm = (C * 256 + D) / 4;
 	}
+	free(data);
 	return rpm;
 }
 
 int get_speed(int fd)
 {
-	int charsread;
-	char buf[50];
-	char *pEnd;
-	long int A = 0, B = 0, speed = 0;
+	long int* data;
+	int speed = 0;
 
-	//ask for speed
 	write(fd, "010D 1\r", 7);
+	data = obd_get_bytes(fd, 3);
 
-	//if we get a proper speed string, calculate and print RPM
-	if (obd_read(fd, buf, 9) == 9) {
-		A = strtol(buf, &pEnd, 16);
-		B = strtol(pEnd, &pEnd, 16);
-		speed = strtol(pEnd, &pEnd, 16);
-	} else
+	if (data == NULL) {
 		speed = -1;
-
+	} else {
+		speed = (int) data[2];
+	}
+	free(data);
 	return speed;
 }
 
