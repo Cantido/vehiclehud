@@ -8,7 +8,8 @@
 #include <unistd.h>
 #include <time.h>
 
-#define PORTNAME "/dev/ttyUSB0"
+#define OBD_PORT "/dev/ttyUSB0"
+#define AVR_PORT "/dev/ttyUSB1"
 #define TIMEOUT 500000
 
 #define DISABLE 0
@@ -102,9 +103,24 @@ void set_baud_115200(int fd)
 
 int obd_open()
 {
-	int fd = open(PORTNAME, O_RDWR | O_NOCTTY | O_SYNC);
+	int fd = open(OBD_PORT, O_RDWR | O_NOCTTY | O_SYNC);
 	if (fd < 0) {
-		printf("error %s opening %s: %s", strerror(errno), PORTNAME,
+		printf("error %s opening %s: %s", strerror(errno), OBD_PORT,
+		       strerror(errno));
+		exit(EXIT_FAILURE);
+	}
+
+	set_interface_attribs(fd, B38400, 0);	// set speed to 38,400 bps, 8n1 (no parity)
+	set_blocking(fd, 0);	// set no blocking
+
+	return fd;
+}
+
+int avr_open()
+{
+	int fd = open(AVR_PORT, O_RDWR | O_NOCTTY | O_SYNC);
+	if (fd < 0) {
+		printf("error %s opening %s: %s", strerror(errno), AVR_PORT,
 		       strerror(errno));
 		exit(EXIT_FAILURE);
 	}

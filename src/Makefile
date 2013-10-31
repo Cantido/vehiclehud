@@ -1,5 +1,13 @@
-all: obdtest.c
-	gcc -std=gnu99 -Wall obdtest.c
+CC = gcc
+CFLAGS = -std=gnu99 -Wall
 
-format: obdtest.c
-	indent -linux obdtest.c
+all: vhudpi avrtest
+
+vhudpi: vhudpi.c
+avrtest: avrtest.c
+
+format: $(src)
+	indent -linux *.c
+
+clean:
+	rm -rf *.exe *~
