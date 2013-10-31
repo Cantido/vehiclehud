@@ -6,13 +6,21 @@ display for a car that is projected on to the windshield. This system will
 pull vehicle information from the OBD-II diagnostic jack located in all modern
 cars.
 
+Compiling Vehiclehud
+--------------------
+
+The main program can be built simply using Make:
+
+```shell
+cd src && make
+```
+
 Using Vehiclehud
 ------------------
-Vehiclehud is built on Python version 2.7.5 for compatibility with the Pyserial
-library. Executing vehiclehud.py will start the program. There is no
-configuration necessary. Vehiclehud will scan for a serial port to use and
-attempt to connect to an OBD-II adapter. If it can connect, it will begin
-polling the OBD device for vehicle information and printing the current RPM to
+There is no configuration necessary. Just execute the program that is created
+by ```make```. Vehiclehud will attempt to connect to an OBD-II adapter at a
+file location defined in the source. If it can connect, it will begin polling
+the OBD device for vehicle information and printing the current RPM to
 standard output.
 
 OBD-II Adapter Support
