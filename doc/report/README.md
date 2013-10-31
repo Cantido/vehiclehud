@@ -1,11 +1,10 @@
 Final Report
 ============
 
-This report is written in LaTeX. To compile:
+This is our final assignment for the VehicleHUD project. We hope it will also
+provide some helpful high-level documentation to the project.
 
-```shell
-pdflatex report.tex
-```
+Compiling
+---------
 
-Note: Compiling the report from scratch requires this command be executed
-twice to properly construct the table of contents.
+This report is written in LaTeX, and the provided Makefile will create a PDF.
