@@ -65,7 +65,6 @@ void set_blocking(int fd, int should_block)
 		printf("error %s setting term attributes", strerror(errno));
 }
 
-
 int avr_open()
 {
 	int fd = open(AVR_PORT, O_RDWR | O_NOCTTY | O_SYNC);
@@ -85,15 +84,15 @@ int main()
 {
 	printf("Starting AVR testing program\n");
 	int avr_fd = avr_open();
-	
-	if(avr_fd <= 0) {
+
+	if (avr_fd <= 0) {
 		perror("Unable to connect to the AVR");
 		exit(EXIT_FAILURE);
 	}
-	uint8_t data[5] = {0x37, 0x00, 0x60, 0x03, 0x09};
-	
-	while("forever") {
-		write(avr_fd, &data, 5); // 96 km/h, 777 RPM
+	uint8_t data[5] = { 0x37, 0x00, 0x60, 0x03, 0x09 };
+
+	while ("forever") {
+		write(avr_fd, &data, 5);	// 96 km/h, 777 RPM
 		sleep(1);
 	}
 	return 0;
