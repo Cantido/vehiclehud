@@ -7,6 +7,7 @@
 #include <termios.h>
 #include <unistd.h>
 #include <time.h>
+#include <stdint.h>
 
 #define AVR_PORT "/dev/ttyUSB1"
 
