@@ -135,6 +135,7 @@ void obd_wait_until_on(int fd)
 {
 	int max_iter = 100;
 	char buf[50];
+	white(fd, "ATIGN\r", 6);
 
 	for (int i = 0; i < max_iter; i++) {
 		obd_read(fd, buf, 10);
@@ -183,10 +184,18 @@ long int *obd_get_bytes(int fd, size_t numbytes)
 	char buf[50];
 	char *pEnd;
 	long int *byteptr;
-
-	size_t numspaces = numbytes - 1;
-	size_t numnewlines = 2;
-	size_t numchars = (numbytes * 2) + numspaces + numnewlines;
+	
+	/* With echoes disabled, he OBD data responses look like this:
+	 *
+	 * >010c\r
+	 * \r\n
+	 * 41 0c XX XX\r\n
+	 * >
+	 *
+	 * if we requested RPM. That adds up to 17 characters after the numbytes * 2 hex chars
+	 */
+	
+	size_t numchars = (numbytes * 2) + 17;
 
 	charsread = obd_read(fd, buf, numchars);
 
