@@ -245,8 +245,8 @@ int get_speed(int fd)
 		speed = -1;
 	} else {
 		speed = (int)data[0];
+		free(data);
 	}
-	free(data);
 	return speed;
 }
 
