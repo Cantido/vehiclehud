@@ -187,15 +187,14 @@ long int *obd_get_bytes(int fd, size_t numbytes)
 	
 	/* With echoes disabled, he OBD data responses look like this:
 	 *
-	 * >010c\r
-	 * \r\n
 	 * 41 0c XX XX\r\n
 	 * >
 	 *
 	 * if we requested RPM. That adds up to 17 characters after the numbytes * 2 hex chars
 	 */
 	
-	size_t numchars = (numbytes * 2) + 17;
+	size_t numchars = 6 + (numbytes * 3 - 1) + 2; // ack + data w/ spaces + newlines
+	
 
 	charsread = obd_read(fd, buf, numchars);
 
@@ -206,6 +205,8 @@ long int *obd_get_bytes(int fd, size_t numbytes)
 		for (short int i = 1; i < numbytes; i++) {
 			byteptr[i] = strtol(pEnd, &pEnd, 16);
 		}
+	} else if(strstr(buf, "STOPPED") != NULL) {
+		fprintf(stderr, "OBD responded \"STOPPED\"\n");
 	} else {
 		byteptr = NULL;
 	}
@@ -215,18 +216,18 @@ long int *obd_get_bytes(int fd, size_t numbytes)
 int get_rpm(int fd)
 {
 	long int *data;
-	long int C, D;
+	long int A, B;
 	int rpm;
 
 	write(fd, "010C 1\r", 7);
-	data = obd_get_bytes(fd, 4);
+	data = obd_get_bytes(fd, 2);
 
 	if (data == NULL) {
 		rpm = -1;
 	} else {
-		C = data[2];
-		D = data[3];
-		rpm = (C * 256 + D) / 4;
+		A = data[0];
+		B = data[1];
+		rpm = (A * 256 + B) / 4;
 	}
 	free(data);
 	return rpm;
@@ -238,12 +239,12 @@ int get_speed(int fd)
 	int speed = 0;
 
 	write(fd, "010D 1\r", 7);
-	data = obd_get_bytes(fd, 3);
+	data = obd_get_bytes(fd, 1);
 
 	if (data == NULL) {
 		speed = -1;
 	} else {
-		speed = (int)data[2];
+		speed = (int)data[0];
 	}
 	free(data);
 	return speed;
