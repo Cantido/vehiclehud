@@ -135,7 +135,7 @@ void obd_wait_until_on(int fd)
 {
 	int max_iter = 100;
 	char buf[50];
-	white(fd, "ATIGN\r", 6);
+	write(fd, "ATIGN\r", 6);
 
 	for (int i = 0; i < max_iter; i++) {
 		obd_read(fd, buf, 10);
