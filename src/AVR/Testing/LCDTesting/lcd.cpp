@@ -22,6 +22,8 @@
        See the C include lcd.h file for a description of each function
        
 *****************************************************************************/
+#define F_CPU 16000000UL
+#include <util/delay.h>
 #include <inttypes.h>
 #include <avr/io.h>
 #include <avr/pgmspace.h>
@@ -110,7 +112,8 @@ static inline void _delayFourCycles(unsigned int __count)
 delay for a minimum of <us> microseconds
 the number of loops is calculated at compile-time from MCU clock frequency
 *************************************************************************/
-#define delay(us)  _delayFourCycles( ( ( 1*(XTAL/4000) )*us)/1000 )
+//#define delay(us)  _delayFourCycles( ( ( 1*(XTAL/4000) )*us)/1000 )
+#define delay(us) _delay_us(us)
 
 
 #if LCD_IO_MODE
@@ -354,7 +357,8 @@ Returns: none
 *************************************************************************/
 void lcd_command(uint8_t cmd)
 {
-    lcd_waitbusy();
+    //lcd_waitbusy();
+	_delay_us(750);
     lcd_write(cmd,0);
 }
 
@@ -366,7 +370,8 @@ Returns: none
 *************************************************************************/
 void lcd_data(uint8_t data)
 {
-    lcd_waitbusy();
+    //lcd_waitbusy();
+	_delay_us(750);
     lcd_write(data,1);
 }
 
@@ -434,12 +439,14 @@ Display character at current cursor position
 Input:    character to be displayed                                       
 Returns:  none
 *************************************************************************/
+/*
 void lcd_putc(char c)
 {
     uint8_t pos;
 
 
     pos = lcd_waitbusy();   // read busy-flag and address counter
+	
     if (c=='\n')
     {
         lcd_newline(pos);
@@ -474,6 +481,12 @@ void lcd_putc(char c)
     }
 
 }/* lcd_putc */
+
+void lcd_putc(char c)
+{
+	_delay_us(750);
+	lcd_write(c, 1);
+}
 
 
 /*************************************************************************
@@ -551,7 +564,6 @@ void lcd_init(uint8_t dispAttr)
         DDR(LCD_DATA0_PORT) |= _BV(LCD_DATA0_PIN);
         DDR(LCD_DATA1_PORT) |= _BV(LCD_DATA1_PIN);
         DDR(LCD_DATA2_PORT) |= _BV(LCD_DATA2_PIN);
-        DDR(LCD_DATA3_PORT) |= _BV(LCD_DATA3_PIN);
     }
     delay(16000);        /* wait 16ms or more after power-on       */
     
@@ -573,7 +585,6 @@ void lcd_init(uint8_t dispAttr)
     LCD_DATA0_PORT &= ~_BV(LCD_DATA0_PIN);   // LCD_FUNCTION_4BIT_1LINE>>4
     lcd_e_toggle();
     delay(64);           /* some displays need this additional delay */
-    
     /* from now the LCD only accepts 4 bit I/O, we can use lcd_command() */    
 #else
     /*
@@ -593,17 +604,17 @@ void lcd_init(uint8_t dispAttr)
     delay(64);                              /* wait 64us                    */
 #endif
 
-#if KS0073_4LINES_MODE
-    /* Display with KS0073 controller requires special commands for enabling 4 line mode */
+/*#if KS0073_4LINES_MODE
+    // Display with KS0073 controller requires special commands for enabling 4 line mode 
 	lcd_command(KS0073_EXTENDED_FUNCTION_REGISTER_ON);
 	lcd_command(KS0073_4LINES_MODE);
 	lcd_command(KS0073_EXTENDED_FUNCTION_REGISTER_OFF);
-#else
-    lcd_command(LCD_FUNCTION_DEFAULT);      /* function set: display lines  */
-#endif
-    lcd_command(LCD_DISP_OFF);              /* display off                  */
-    lcd_clrscr();                           /* display clear                */ 
-    lcd_command(LCD_MODE_DEFAULT);          /* set entry mode               */
-    lcd_command(dispAttr);                  /* display/cursor control       */
+#else*/
+    lcd_command(LCD_FUNCTION_DEFAULT);      // function set: display lines  
+//#endif
+    lcd_command(LCD_DISP_OFF);              // display off                  
+    lcd_clrscr();                           // display clear                 
+    lcd_command(LCD_MODE_DEFAULT);          // set entry mode               
+    lcd_command(dispAttr);                  // display/cursor control       
 
 }/* lcd_init */

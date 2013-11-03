@@ -194,12 +194,12 @@ long int *obd_get_bytes(int fd, size_t numbytes)
 	 * if we requested RPM. That adds up to 17 characters after the numbytes * 2 hex chars
 	 */
 	
-	size_t numchars = 6 + (numbytes * 3 - 1) + 2; // ack + data w/ spaces + newlines
-	
+	//size_t numchars = 6 + (numbytes * 3 - 1) + 2; // ack + data w/ spaces + newlines
+	size_t numchars = (numbytes * 3 - 1) + 2; // ack + data w/ spaces + newlines
 
 	charsread = obd_read(fd, buf, numchars);
 
-	if (charsread == numchars) {
+	if (charsread == (numchars - 1)) {
 		byteptr = malloc(sizeof(measureme) * numbytes);
 
 		byteptr[0] = strtol(buf, &pEnd, 16);
@@ -284,7 +284,9 @@ int main()
 	printf("Beginning read cycle...\n");
 
 	while (1) {
+		usleep(50000);
 		RPM = get_rpm(fd);
+		usleep(50000);
 		speed = get_speed(fd);
 
 		printf("RPM: %d\nSpeed: %d\n", RPM, speed);
