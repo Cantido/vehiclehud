@@ -181,6 +181,7 @@ void obd_enable_echo(int fd, bool enable)
 long int *obd_get_bytes(int fd, size_t numbytes)
 {
 	int charsread;
+	short int measureme = 0;
 	char buf[50];
 	char *pEnd;
 	long int *byteptr;
@@ -199,7 +200,7 @@ long int *obd_get_bytes(int fd, size_t numbytes)
 	charsread = obd_read(fd, buf, numchars);
 
 	if (charsread == numchars) {
-		byteptr = malloc(sizeof(short int) * numbytes);
+		byteptr = malloc(sizeof(measureme) * numbytes);
 
 		byteptr[0] = strtol(buf, &pEnd, 16);
 		for (short int i = 1; i < numbytes; i++) {
