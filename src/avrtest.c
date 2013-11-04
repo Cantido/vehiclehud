@@ -116,7 +116,7 @@ int main()
 			RPM = 0;
 		packet.speed = speed;
 		packet.rpm = ((RPM << 8) | (RPM >> 8));
-		printf("Sent: %d bytes.\n", write(avr_fd, data, sizeof(packet)));
+		printf("Sent: %d bytes.\n", (int) write(avr_fd, data, sizeof(packet)));
 		usleep(100000);
 	}
 	return 0;
