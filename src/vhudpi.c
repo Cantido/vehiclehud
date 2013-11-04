@@ -7,13 +7,28 @@
 #include <termios.h>
 #include <unistd.h>
 #include <time.h>
+#include <stdint.h>
 
-#define OBD_PORT "/dev/ttyUSB0"
+#define OBD_PORT "/dev/ttyUSB0"  // for the USB ELM327
+//#define OBD_PORT "/dev/rfcomm0" // for the Bluetooth ELM327
 #define AVR_PORT "/dev/ttyUSB1"
 #define TIMEOUT 500000
 
 #define DISABLE 0
 #define ENABLE 1
+
+struct AVRPacket
+{
+	uint16_t 	header;	//byte 0, byte 1
+	uint8_t		speed;	//byte 2
+	uint16_t 	rpm;	//byte 3, byte 4
+	uint8_t		tPos;	//byte 5
+	uint8_t		iTemp;	//byte 6
+	uint8_t		eLoad;	//byte 7
+	uint8_t		eTemp;	//byte 8
+	uint16_t 	maf;	//byte 9, byte 10
+	uint8_t		tAdv;	//byte 11
+};
 
 int set_interface_attribs(int fd, int speed, int parity)
 {
@@ -135,16 +150,37 @@ void obd_wait_until_on(int fd)
 {
 	int max_iter = 100;
 	char buf[50];
-	write(fd, "ATIGN\r", 6);
+	
 
-	for (int i = 0; i < max_iter; i++) {
+	for (int i = 0; i < max_iter; i++) 
+	{
+		write(fd, "ATIGN\r", 6);
 		obd_read(fd, buf, 10);
 		if (strstr(buf, "ON") != NULL) {
 			return;
 		}
-		usleep(1000);
+		usleep(10000);
 	}
 	printf("Device was not ready in an acceptable amount of time\n");
+	exit(EXIT_FAILURE);
+}
+
+void obd_wait_until_echo(int fd, bool enable)
+{
+	int max_iter = 100;
+	char buf[50];
+	
+
+	for (int i = 0; i < max_iter; i++) 
+	{
+		write(fd, (enable ? "ATE1\r" : "ATE0\r"), 5);
+		obd_read(fd, buf, 10);
+		if (strstr(buf, "OK") != NULL) {
+			return;
+		}
+		usleep(10000);
+	}
+	printf("Echo was not set in an acceptable amount of time\n");
 	exit(EXIT_FAILURE);
 }
 
@@ -181,7 +217,6 @@ void obd_enable_echo(int fd, bool enable)
 long int *obd_get_bytes(int fd, size_t numbytes)
 {
 	int charsread;
-	short int measureme = 0;
 	char buf[50];
 	char *pEnd;
 	long int *byteptr;
@@ -191,16 +226,18 @@ long int *obd_get_bytes(int fd, size_t numbytes)
 	 * 41 0c XX XX\r\n
 	 * >
 	 *
-	 * if we requested RPM. That adds up to 17 characters after the numbytes * 2 hex chars
+	 * The first two bytes acknowledge the request and don't provide any
+	 * data specific to the request, so we'll strip them out here. They will
+	 * not be returned and functions will not need to include them in the
+	 * numbytes count.
 	 */
-	
-	//size_t numchars = 6 + (numbytes * 3 - 1) + 2; // ack + data w/ spaces + newlines
-	size_t numchars = (numbytes * 3 - 1) + 2; // ack + data w/ spaces + newlines
+	 
+	size_t numchars = 6 + (numbytes * 3 - 1) + 1; // ack + data w/ spaces + newline 
 
 	charsread = obd_read(fd, buf, numchars);
-
 	if (charsread == (numchars - 1)) {
-		byteptr = malloc(sizeof(measureme) * numbytes);
+	
+		byteptr = (long int*) malloc(sizeof(byteptr)*numbytes);
 
 		byteptr[0] = strtol(buf, &pEnd, 16);
 		for (short int i = 1; i < numbytes; i++) {
@@ -208,6 +245,7 @@ long int *obd_get_bytes(int fd, size_t numbytes)
 		}
 	} else if(strstr(buf, "STOPPED") != NULL) {
 		fprintf(stderr, "OBD responded \"STOPPED\"\n");
+		byteptr = NULL;
 	} else {
 		byteptr = NULL;
 	}
@@ -356,9 +394,16 @@ int get_timing_adv(int fd) {
 int main()
 {
 	int fd = obd_open();
+	int avr_fd = avr_open();
+	
+	uint8_t data[5] = {0x37, 0x00, 0x60, 0x03, 0x09};
+	
+	uint16_t avr_RPM;
 
-	int RPM = 0;		//calculated engine RPM
-	int speed = 0;		//vehicle speed
+	int RPM = 0;
+	int speed = 0;
+
+
 
 	printf("Resetting the chip...\n");
 	obd_reset(fd);
@@ -369,7 +414,11 @@ int main()
 	//clear IO buffers
 	tcflush(fd, TCIOFLUSH);
 
-	obd_enable_echo(fd, DISABLE);
+	/*
+	 *	keep trying to turn OFF echos until the ELM complies
+	 *
+	 */
+	obd_wait_until_echo(fd, false);
 
 	printf("Making sure chip is working...\n");
 	obd_wait_until_on(fd);
@@ -382,13 +431,27 @@ int main()
 
 	printf("Beginning read cycle...\n");
 
-	while (1) {
-		usleep(50000);
+	while (1) 
+	{
+		usleep(60000);
 		RPM = get_rpm(fd);
+
 		usleep(50000);
 		speed = get_speed(fd);
 
-		printf("RPM: %d\nSpeed: %d\n", RPM, speed);
+
+		if ((RPM != -1) && (speed != -1))
+		{
+			avr_RPM = RPM;
+			data[2] = speed;
+			data[3] = (avr_RPM >> 8);
+			data[4] = avr_RPM;
+
+			write(avr_fd, data, 5);
+			printf("RPM: %d\nSpeed: %d\n", RPM, speed);
+		}
+
+		tcflush(fd, TCIOFLUSH);
 	}
 
 	return 0;
