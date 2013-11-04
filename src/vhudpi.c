@@ -359,9 +359,6 @@ int main()
 
 	int RPM = 0;		//calculated engine RPM
 	int speed = 0;		//vehicle speed
-	char buf[50];
-
-	memset(buf, 0, sizeof buf);	//clear the buffer
 
 	printf("Resetting the chip...\n");
 	obd_reset(fd);
