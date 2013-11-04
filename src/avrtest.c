@@ -1,15 +1,22 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <stdint.h>
 #include <string.h>
 #include <fcntl.h>
 #include <errno.h>
 #include <termios.h>
 #include <unistd.h>
 #include <time.h>
-#include <stdint.h>
 
 #define AVR_PORT "/dev/ttyUSB1"
+
+struct AVRPacket
+{
+	uint16_t header;
+	uint8_t	speed;
+	uint16_t rpm;
+}__attribute((packed))__;
 
 int set_interface_attribs(int fd, int speed, int parity)
 {
@@ -66,6 +73,7 @@ void set_blocking(int fd, int should_block)
 		printf("error %s setting term attributes", strerror(errno));
 }
 
+
 int avr_open()
 {
 	int fd = open(AVR_PORT, O_RDWR | O_NOCTTY | O_SYNC);
@@ -85,16 +93,31 @@ int main()
 {
 	printf("Starting AVR testing program\n");
 	int avr_fd = avr_open();
-
-	if (avr_fd <= 0) {
+	
+	if(avr_fd <= 0) {
 		perror("Unable to connect to the AVR");
 		exit(EXIT_FAILURE);
 	}
-	uint8_t data[5] = { 0x37, 0x00, 0x60, 0x03, 0x09 };
 
-	while ("forever") {
-		write(avr_fd, &data, 5);	// 96 km/h, 777 RPM
-		sleep(1);
+	uint8_t speed = 0;
+	uint16_t RPM = 0;
+	struct AVRPacket packet = {0x0000, 0x00, 0x0000};
+	struct AVRPacket *data = &packet;
+	
+	while("forever") 
+	{	
+		if (speed != 110)
+			++speed;
+		else
+			speed = 0;
+		if (RPM != 65500)
+			RPM += 100;
+		else
+			RPM = 0;
+		packet.speed = speed;
+		packet.rpm = ((RPM << 8) | (RPM >> 8));
+		printf("Sent: %d bytes.\n", write(avr_fd, data, sizeof(packet)));
+		usleep(100000);
 	}
 	return 0;
 }

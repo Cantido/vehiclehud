@@ -33,6 +33,19 @@
 #define DISABLE 0
 #define ENABLE 1
 
+struct AVRPacket
+{
+	uint16_t 	header;	//byte 0, byte 1
+	uint8_t		speed;	//byte 2
+	uint16_t 	rpm;	//byte 3, byte 4
+	uint8_t		tPos;	//byte 5
+	uint8_t		iTemp;	//byte 6
+	uint8_t		eLoad;	//byte 7
+	uint8_t		eTemp;	//byte 8
+	uint16_t 	maf;	//byte 9, byte 10
+	uint8_t		tAdv;	//byte 11
+};
+
 int set_interface_attribs(int fd, int speed, int parity)
 {
 	struct termios tty;
@@ -376,6 +389,10 @@ int main()
 	 */
 	int avr_fd = avr_open();
 	uint8_t data[5] = {0x37, 0x00, 0x60, 0x03, 0x09};
+	
+	//AVRPacket packet = {0x0000, 0x00, 0x0000, 0x00, 0x00, 0x00, 0x00, 0x0000, 0x00};
+	//packet* data = packet;
+	
 	uint16_t avr_RPM;
 
 	int RPM = 0;		//calculated engine RPM
@@ -451,6 +468,11 @@ int main()
 			data[2] = speed;
 			data[3] = (avr_RPM >> 8);
 			data[4] = avr_RPM;
+			
+			//packet.header = 0x00;
+			//packet.speed = speed;
+			//packet.rpm = avr_RPM;
+			//write(avr_fd, data, sizeof(packet));
 			write(avr_fd, data, 5);
 			printf("RPM: %d\nSpeed: %d\n", RPM, speed);
 		}
