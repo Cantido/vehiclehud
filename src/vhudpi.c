@@ -251,15 +251,114 @@ int get_speed(int fd)
 	return speed;
 }
 
+int get_throttle(int fd) {
+	long int *data;
+	int throttle = 0;
+	
+	write(fd, "0111 1\r", 7);
+	
+	data = obd_get_bytes(fd, 1);
+	
+	if (data == NULL) {
+		throttle = -1;
+	} else {
+		throttle = (int)data[0] * 100 / 255;
+		free(data);
+	}
+	return throttle;
+}
+
+int get_intake_temp(int fd) {
+	long int *data;
+	int intake_temp = 0;
+	
+	write(fd, "010F 1\r", 7);
+	
+	data = obd_get_bytes(fd, 1);
+	
+	if (data == NULL) {
+		intake_temp = -1;
+	} else {
+		intake_temp = (int)data[0] - 40;
+		free(data);
+	}
+	return intake_temp;
+}
+
+int get_engine_load(int fd) {
+	long int *data;
+	int engine_load = 0;
+	
+	write(fd, "0104 1\r", 7);
+	
+	data = obd_get_bytes(fd, 1);
+	
+	if (data == NULL) {
+		engine_load = -1;
+	} else {
+		engine_load = (int)data[0] * 100 / 255;
+		free(data);
+	}
+	return engine_load;
+}
+
+int get_engine_temp(int fd) {
+	long int *data;
+	int engine_temp = 0;
+	
+	write(fd, "0105 1\r", 7);
+	
+	data = obd_get_bytes(fd, 1);
+	
+	if (data == NULL) {
+		engine_temp = -1;
+	} else {
+		engine_temp = (int)data[0] - 40;
+		free(data);
+	}
+	return engine_temp;
+}
+
+int get_maf(int fd) {
+	long int *data;
+	int maf = 0;
+	
+	write(fd, "0110 1\r", 7);
+	
+	data = obd_get_bytes(fd, 1);
+	
+	if (data == NULL) {
+		maf = -1;
+	} else {
+		maf = (int)data[0] / 100;
+		free(data);
+	}
+	return maf;
+}
+
+int get_timing_adv(int fd) {
+	long int *data;
+	int timing_adv = 0;
+	
+	write(fd, "010E 1\r", 7);
+	
+	data = obd_get_bytes(fd, 1);
+	
+	if (data == NULL) {
+		timing_adv = -1;
+	} else {
+		timing_adv = (int)data[0]/2 - 64;
+		free(data);
+	}
+	return timing_adv;
+}
+
 int main()
 {
 	int fd = obd_open();
 
 	int RPM = 0;		//calculated engine RPM
 	int speed = 0;		//vehicle speed
-	char buf[50];
-
-	memset(buf, 0, sizeof buf);	//clear the buffer
 
 	printf("Resetting the chip...\n");
 	obd_reset(fd);
