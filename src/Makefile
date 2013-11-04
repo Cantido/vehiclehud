@@ -1,4 +1,3 @@
-CC = gcc
 CFLAGS = -std=gnu99 -Wall
 
 all: vhudpi avrtest
