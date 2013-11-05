@@ -9,10 +9,11 @@
 #include <time.h>
 #include <stdint.h>
 
-#define OBD_PORT "/dev/ttyUSB0"  // for the USB ELM327
-//#define OBD_PORT "/dev/rfcomm0" // for the Bluetooth ELM327
+//#define OBD_PORT "/dev/ttyUSB0"  // for the USB ELM327
+#define OBD_PORT "/dev/rfcomm0" // for the Bluetooth ELM327
 #define AVR_PORT "/dev/ttyUSB1"
 #define TIMEOUT 500000
+#define MAX_CHARS 50
 
 #define DISABLE 0
 #define ENABLE 1
@@ -27,8 +28,8 @@ struct AVRPacket
 	uint8_t		eLoad;	//byte 7
 	uint8_t		eTemp;	//byte 8
 	uint16_t 	maf;	//byte 9, byte 10
-	uint8_t		tAdv;	//byte 11
-};
+	//uint8_t		tAdv;	//byte 11
+}__attribute((packed))__;
 
 int set_interface_attribs(int fd, int speed, int parity)
 {
@@ -89,7 +90,15 @@ int obd_read(int fd, char *buf, size_t count)
 {
 	int charsprocessed = 0;
 	char readbuf[50];
-	int charsread = read(fd, readbuf, count);
+	int charsread = 0;
+	while ((read(fd, &readbuf[charsread], 1) != -1) && charsread < MAX_CHARS)
+	{
+		++charsread;
+		if (readbuf[charsread - 1] == '>')
+			break;
+		
+		usleep(1000);
+	}
 
 	//get rid of any worthless characters
 	for (int i = 0; i < charsread; ++i) {
@@ -235,12 +244,12 @@ long int *obd_get_bytes(int fd, size_t numbytes)
 	size_t numchars = 6 + (numbytes * 3 - 1) + 1; // ack + data w/ spaces + newline 
 
 	charsread = obd_read(fd, buf, numchars);
-	if (charsread == (numchars - 1)) {
+	if (charsread == (numchars)) {
 	
-		byteptr = (long int*) malloc(sizeof(byteptr)*numbytes);
+		byteptr = (long int*) malloc(8*(numbytes + 2));
 
 		byteptr[0] = strtol(buf, &pEnd, 16);
-		for (short int i = 1; i < numbytes; i++) {
+		for (short int i = 1; i < numbytes + 2; i++) {
 			byteptr[i] = strtol(pEnd, &pEnd, 16);
 		}
 	} else if(strstr(buf, "STOPPED") != NULL) {
@@ -255,7 +264,6 @@ long int *obd_get_bytes(int fd, size_t numbytes)
 int get_rpm(int fd)
 {
 	long int *data;
-	long int A, B;
 	int rpm;
 
 	write(fd, "010C 1\r", 7);
@@ -264,11 +272,11 @@ int get_rpm(int fd)
 	if (data == NULL) {
 		rpm = -1;
 	} else {
-		A = data[0];
-		B = data[1];
-		rpm = (A * 256 + B) / 4;
+
+		rpm = ((data[2] * 256) + data[3])/ 4;
+		free(data);
 	}
-	free(data);
+	
 	return rpm;
 }
 
@@ -283,7 +291,7 @@ int get_speed(int fd)
 	if (data == NULL) {
 		speed = -1;
 	} else {
-		speed = (int)data[0];
+		speed = (int)data[2];
 		free(data);
 	}
 	return speed;
@@ -394,11 +402,10 @@ int get_timing_adv(int fd) {
 int main()
 {
 	int fd = obd_open();
-	int avr_fd = avr_open();
-	
-	uint8_t data[5] = {0x37, 0x00, 0x60, 0x03, 0x09};
-	
-	uint16_t avr_RPM;
+	//int avr_fd = avr_open();
+
+	struct AVRPacket packet = {0x0000, 0x00, 0x0000, 0x00, 0x00, 0x00, 0x00, 0x0000};
+	struct AVRPacket *data = &packet;
 
 	int RPM = 0;
 	int speed = 0;
@@ -414,12 +421,10 @@ int main()
 	//clear IO buffers
 	tcflush(fd, TCIOFLUSH);
 
-	/*
-	 *	keep trying to turn OFF echos until the ELM complies
-	 *
-	 */
+	//turn off echos
 	obd_wait_until_echo(fd, false);
 
+	//wait until the chip is working again
 	printf("Making sure chip is working...\n");
 	obd_wait_until_on(fd);
 
@@ -433,24 +438,23 @@ int main()
 
 	while (1) 
 	{
-		usleep(60000);
+		usleep(10000);
 		RPM = get_rpm(fd);
 
-		usleep(50000);
+		usleep(20000);
 		speed = get_speed(fd);
 
 
 		if ((RPM != -1) && (speed != -1))
 		{
-			avr_RPM = RPM;
-			data[2] = speed;
-			data[3] = (avr_RPM >> 8);
-			data[4] = avr_RPM;
+			packet.speed = speed;
+			packet.rpm = (RPM << 8) | (RPM >> 8);
 
-			write(avr_fd, data, 5);
+			//write(avr_fd, data, sizeof(packet));
 			printf("RPM: %d\nSpeed: %d\n", RPM, speed);
 		}
 
+		//flush buffers just in case
 		tcflush(fd, TCIOFLUSH);
 	}
 
