@@ -86,6 +86,17 @@ void set_blocking(int fd, int should_block)
 		printf("error %s setting term attributes", strerror(errno));
 }
 
+void strip_chars(char *buf, int length) {
+	int charsprocessed = 0;
+	
+	for (int i = 0; i < length; ++i) {
+		if ((buf[i] != '>') && (buf[i] != '\r')) {
+			buf[charsprocessed] = buf[i];
+			++charsprocessed;
+		}
+	}	
+}
+
 int obd_read(int fd, char *buf)
 {
 	int charsprocessed = 0;
@@ -105,17 +116,6 @@ int obd_read(int fd, char *buf)
 	//terminate the parsed string
 	buf[charsprocessed + 1] = '\0';
 	return charsprocessed;
-}
-
-void strip_chars(char *buf, int length) {
-	int charsprocessed = 0;
-	
-	for (int i = 0; i < length; ++i) {
-		if ((buf[i] != '>') && (buf[i] != '\r')) {
-			buf[charsprocessed] = buf[i];
-			++charsprocessed;
-		}
-	}	
 }
 
 void set_baud_115200(int fd)
@@ -170,7 +170,7 @@ void obd_wait_until_on(int fd)
 	for (int i = 0; i < max_iter; i++) 
 	{
 		write(fd, "ATIGN\r", 6);
-		obd_read(fd, buf, 10);
+		obd_read(fd, buf);
 		if (strstr(buf, "ON") != NULL) {
 			return;
 		}
@@ -189,7 +189,7 @@ void obd_wait_until_echo(int fd, bool enable)
 	for (int i = 0; i < max_iter; i++) 
 	{
 		write(fd, (enable ? "ATE1\r" : "ATE0\r"), 5);
-		obd_read(fd, buf, 10);
+		obd_read(fd, buf);
 		if (strstr(buf, "OK") != NULL) {
 			return;
 		}
@@ -215,7 +215,7 @@ bool obd_find_protocol(int fd)
 	char buf[50];
 	write(fd, "0100\r", 5);
 	usleep(2000000);
-	if (obd_read(fd, buf, 18) >= 17)
+	if (obd_read(fd, buf) >= 17)
 		return true;
 	else
 		return false;
