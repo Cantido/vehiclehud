@@ -1,4 +1,4 @@
-CFLAGS = -std=gnu99 -Wall
+CFLAGS += -std=gnu99 -Wall
 
 all: vhudpi avrtest
 
