@@ -86,7 +86,7 @@ void set_blocking(int fd, int should_block)
 		printf("error %s setting term attributes", strerror(errno));
 }
 
-int obd_read(int fd, char *buf, size_t count)
+int obd_read(int fd, char *buf)
 {
 	int charsprocessed = 0;
 	char readbuf[50];
@@ -100,16 +100,22 @@ int obd_read(int fd, char *buf, size_t count)
 		usleep(1000);
 	}
 
-	//get rid of any worthless characters
-	for (int i = 0; i < charsread; ++i) {
-		if ((readbuf[i] != '>') && (readbuf[i] != '\r')) {
-			buf[charsprocessed] = readbuf[i];
-			++charsprocessed;
-		}
-	}
+	strip_chars(readbuf, charsread);
+	
 	//terminate the parsed string
 	buf[charsprocessed + 1] = '\0';
 	return charsprocessed;
+}
+
+void strip_chars(char *buf, int length) {
+	int charsprocessed = 0;
+	
+	for (int i = 0; i < length; ++i) {
+		if ((buf[i] != '>') && (buf[i] != '\r')) {
+			buf[charsprocessed] = buf[i];
+			++charsprocessed;
+		}
+	}	
 }
 
 void set_baud_115200(int fd)
@@ -229,23 +235,13 @@ long int *obd_get_bytes(int fd, size_t numbytes)
 	char buf[50];
 	char *pEnd;
 	long int *byteptr;
-	
-	/* With echoes disabled, he OBD data responses look like this:
-	 *
-	 * 41 0c XX XX\r\n
-	 * >
-	 *
-	 * The first two bytes acknowledge the request and don't provide any
-	 * data specific to the request, so we'll strip them out here. They will
-	 * not be returned and functions will not need to include them in the
-	 * numbytes count.
-	 */
-	 
-	size_t numchars = 6 + (numbytes * 3 - 1) + 1; // ack + data w/ spaces + newline 
 
-	charsread = obd_read(fd, buf, numchars);
-	if (charsread == (numchars)) {
+	 
+	size_t expected = 6 + (numbytes * 3 - 1) + 1; // ack + data w/ spaces + newline 
+
+	charsread = obd_read(fd, buf);
 	
+	if (charsread == expected) {
 		byteptr = (long int*) malloc(8*(numbytes + 2));
 
 		byteptr[0] = strtol(buf, &pEnd, 16);
@@ -273,7 +269,7 @@ int get_rpm(int fd)
 		rpm = -1;
 	} else {
 
-		rpm = ((data[2] * 256) + data[3])/ 4;
+		rpm = ((data[0] * 256) + data[1])/ 4;
 		free(data);
 	}
 	
@@ -291,7 +287,7 @@ int get_speed(int fd)
 	if (data == NULL) {
 		speed = -1;
 	} else {
-		speed = (int)data[2];
+		speed = (int)data[0];
 		free(data);
 	}
 	return speed;
