@@ -204,7 +204,7 @@ bool obd_reset(int fd)
 	char buf[50];
 	write(fd, "ATZ\r", 4);
 	usleep(1000000);
-	if (obd_read(fd, buf, 11) >= 10)
+	if (obd_read(fd, buf) >= 10)
 		return true;
 	else
 		return false;
