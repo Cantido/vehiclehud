@@ -1,4 +1,5 @@
 \chapter{Detailed Design}
+\label{chap:detailed-design}
 
 % This section will form the bulk of the report. Here you should include
 % design decisions and tradeoffs as well as any detailed technical drawings
@@ -17,7 +18,7 @@
 % impossible to write up until the final project is completed.
 
 \section{PSU}
-Due to the volatile nature of automotive electrical systems, a very stable and 
+Due to the volatile nature of automotive electrical systems, an exceptionally stable and 
 resilient power supply is required for this project.  Despite being ``12 volt''
 systems, most automotive circuits run at close to 14 volts to charge the 12
 volt battery.  However, during high-load conditions such as cold-cranking or
@@ -26,11 +27,11 @@ may swing from $-100$ to $+100$ volts.  For these reasons, the power supply used
 employs a number of protection techniques and switching regulators to provide
 safe, consistent power to the remaining circuitry.
 
-The input stage of the power supply provides over, under, and reverse voltage
+The input stage of the power supply provides over-, under-, and reverse-voltage
 protection.  A control chip from Linear Technology is used to drive two pass
 FETs if the supply voltage is between 3.5 and 18 volts.  If the supply voltage
-is outside this range, the FETs and turned off and the following circuitry is
-protected.  Large transient-voltage-suppresion (TVS) diodes are also present to
+is outside this range, the FETs are turned off and the circuitry is
+protected.  Large transient-voltage-suppression (TVS) diodes are also present to
 protect against severe ($\pm 100$V) transients.  The output of this stage includes
 large bulk capacitors to handle brown-outs.
 
@@ -38,25 +39,27 @@ The second portion of the power supply includes a dual buck switching regulator
 to provide 3.3V and 5V at 3A apiece.  This portion of the supply must support 
 the highest loads during normal operation.  The Raspberry Pi, AVR 
 microcontroller, and vacuum-fluorescent display are all powered from 5V and 
-require up 2A.  The USB to UART and OBD to UART converters both use 3.3V at 
+require up 2A.  The USB-to-UART and OBD-to-UART converters both use 3.3V at 
 close to 500mA.  A buck topology was chosen since the supply voltage will be
 above 5V except during severe brown-out conditions.
 
-The third and final poriton of the power supply uses a buck-boost switching
+The third and final portion of the power supply uses a buck-boost switching
 regulator to supply 12V at 1.5A.  This voltage is used to support several
-of the OBD protocols.  While the raw voltage from the car itself could be used
+OBD protocols.  While the raw voltage from the car itself could be used
 for this purpose, more protection would be required.  This supply also allows
 for different displays that may require 12V.  A buck-boost topology was chosen
-since the input voltage can droop well below 12V, though most of the time it is
+because the input voltage can drop well below 12V, though most of the time it is
 around 14V.
 
 The use of switching regulators provides very consistent and efficient operation
 at almost all supply voltages.  The 5 and 3.3 volt rails operate well with input
-voltages from 5 to 18V and the 12 volt rail operates over the "safe" range, i.e.
+voltages from 5 to 18V and the 12 volt rail operates over the ``safe'' range of
 3.5 to 18V.  With approximately 60\% loads on each rail, the entire board is close
 to 90\% efficient.  While not a requirement of the project, a high-efficiency power
-supply is advantageous due to decreased power draw and heat.  The power supply was
-designed as a 4-layer PCB of which most the layers are ground to provide 
+supply is advantageous due to decreased power draw and heat.
+
+The power supply was
+designed as a 4-layer PCB, of which most layers are grounded in order to provide 
 heat-sinking and shielding from high-frequency switching signals.
 
 \section{Main Board}
@@ -69,7 +72,7 @@ development.  The main board was designed as a 4-layer PCB.
 An Atmel AVR ATmega32U4 was chosen as the microcontroller to drive the VFD.  This
 controller provides sufficient memory and processing power to handle this task. 
 It is also used to handle switch inputs for changing brightness, display modes,
-and other options.  The AVR also has the ability to output to a character LCD
+and other options.  The AVR can also output to a character LCD
 for debugging.  It will communicate with the Raspberry Pi via UART.
 
 \subsection{STN1110}
@@ -95,17 +98,17 @@ main board via USB, and delegates the tasks of gathering and displaying data
 to the main board.
 
 \subsection{Operating System}
-The operating system chosen for the Raspberry Pi was Rasbian, which is the
-most used and well-known operating system for the Raspberry Pi. Rasbian was
-chosen for these reasons as well: we wanted to focus on designing the overall
+We chose Rasbian to be the operating system for the Raspberry Pi because it is the
+most used and well-known operating system for the Raspberry Pi. We wanted to focus
+on designing the overall
 system, not on wrestling with an obscure operating system. We prioritized ease
 of development.
 
 \section{Software}
-The software for the system is written in Python 2.7.5. Python was chosen
+The software for the system was prototyped in Python 2.7.5, and then finally
+implemented in C$++$. Python was chosen
 because it is the language of choice for the Raspberry Pi, and allows us to
-quickly and 
-exibly develop the high-level system software. The version was
+quickly and easily develop the high-level system software. Version 2.7.5 was
 chosen for compatibility with the PySerial library, which the software uses to
 communicate over USB.
 
