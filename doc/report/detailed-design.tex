@@ -28,7 +28,7 @@ employs a number of protection techniques and switching regulators to provide
 safe, consistent power to the remaining circuitry.
 
 The input stage of the power supply provides over-, under-, and reverse-voltage
-protection.  A control chip from Linear Technology is used to drive two pass
+protection.  A control chip from Linear Technology \cite{ltc4365ds} is used to drive two pass
 FETs if the supply voltage is between 3.5 and 18 volts.  If the supply voltage
 is outside this range, the FETs are turned off and the circuitry is
 protected.  Large transient-voltage-suppression (TVS) diodes are also present to
@@ -39,12 +39,12 @@ The second portion of the power supply includes a dual buck switching regulator
 to provide 3.3V and 5V at 3A apiece.  This portion of the supply must support 
 the highest loads during normal operation.  The Raspberry Pi, AVR 
 microcontroller, and vacuum-fluorescent display are all powered from 5V and 
-require up 2A.  The USB-to-UART and OBD-to-UART converters both use 3.3V at 
+require up 2A.  The USB-to-UART \cite{ft2232hds} and OBD-to-UART \cite{stn1110ds} converters both use 3.3V at 
 close to 500mA.  A buck topology was chosen since the supply voltage will be
 above 5V except during severe brown-out conditions.
 
 The third and final portion of the power supply uses a buck-boost switching
-regulator to supply 12V at 1.5A.  This voltage is used to support several
+regulator \cite{ltc3225ds} to supply 12V at 1.5A.  This voltage is used to support several
 OBD protocols.  While the raw voltage from the car itself could be used
 for this purpose, more protection would be required.  This supply also allows
 for different displays that may require 12V.  A buck-boost topology was chosen
@@ -69,7 +69,7 @@ display that data to the VFD.  External inputs are also provided for future
 development.  The main board was designed as a 4-layer PCB.
 
 \subsection{AVR}
-An Atmel AVR ATmega32U4 was chosen as the microcontroller to drive the VFD.  This
+An Atmel AVR ATmega32U4 \cite{atmega32u4ds} was chosen as the microcontroller to drive the VFD.  This
 controller provides sufficient memory and processing power to handle this task. 
 It is also used to handle switch inputs for changing brightness, display modes,
 and other options.  The AVR can also output to a character LCD
@@ -81,7 +81,8 @@ vehicle.  The STN and its supporting circuitry handle all of the standard OBD
 protcols and communicate via UART.  This chip is considered an improvement over
 the ubiquitous ELM327 used in many USB and Bluetooth adapters.  The STN provides
 more functionality than the ELM and includes an additional instruction set that
-can streamline higher-level software.
+can streamline higher-level software. A datasheet for this device is available
+at \cite{stn1110ds}.
 
 \subsection{FTDI USB to UART}
 To easily connect both the AVR and STN to the Raspberry Pi, an FTDI FT2232H UART 
@@ -89,6 +90,7 @@ to USB converter was included on the main board.  This chip will enumerate on th
 Raspberry Pi as two virtual serial ports.  These ports are very easy to interface
 with via C and provide an easy communication method.  The chip supports UART baud
 rates up to 1MBaud, which is sufficiently fast for all operations in this project.
+A datasheet for this device is available at \cite{ft2232hds}.
 
 \section{Raspberry Pi}
 
