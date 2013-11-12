@@ -2,11 +2,14 @@
 \usepackage{hyperref} % used by detailed-design.tex and affects the entire document
 \usepackage{multicol} % used by cover.tex
 \usepackage{graphicx} % used by introduction.tex
+\usepackage[obeyDraft]{todonotes} % used by several sections
 
 \begin{document}
 
 \input{./cover.tex}
 \tableofcontents
+\todototoc
+\listoftodos
 \input{./executive-summary.tex}
 \input{./project-team.tex}
 \input{./introduction.tex}
