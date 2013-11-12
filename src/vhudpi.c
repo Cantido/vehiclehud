@@ -9,8 +9,9 @@
 #include <time.h>
 #include <stdint.h>
 
-//#define OBD_PORT "/dev/ttyUSB0"  // for the USB ELM327
-#define OBD_PORT "/dev/rfcomm0" // for the Bluetooth ELM327
+//#define OBD_PORT "/dev/ttyUSB1"  // for the USB ELM327
+//#define OBD_PORT "/dev/rfcomm0"  // for the Bluetooth ELM327
+#define OBD_PORT "/dev/ttyS3"      // for Cygwin on Windows
 #define AVR_PORT "/dev/ttyUSB1"
 #define TIMEOUT 500000
 #define MAX_CHARS 50
@@ -86,38 +87,6 @@ void set_blocking(int fd, int should_block)
 		printf("error %s setting term attributes", strerror(errno));
 }
 
-void strip_chars(char *buf, int length) {
-	int charsprocessed = 0;
-	
-	for (int i = 0; i < length; ++i) {
-		if ((buf[i] != '>') && (buf[i] != '\r')) {
-			buf[charsprocessed] = buf[i];
-			++charsprocessed;
-		}
-	}	
-}
-
-int obd_read(int fd, char *buf)
-{
-	int charsprocessed = 0;
-	char readbuf[50];
-	int charsread = 0;
-	while ((read(fd, &readbuf[charsread], 1) != -1) && charsread < MAX_CHARS)
-	{
-		++charsread;
-		if (readbuf[charsread - 1] == '>')
-			break;
-		
-		usleep(1000);
-	}
-
-	strip_chars(readbuf, charsread);
-	
-	//terminate the parsed string
-	buf[charsprocessed + 1] = '\0';
-	return charsprocessed;
-}
-
 void set_baud_115200(int fd)
 {
 
@@ -130,6 +99,7 @@ void set_baud_115200(int fd)
 	write(fd, "\r", 1);
 	usleep(1000000);
 }
+
 
 int obd_open()
 {
@@ -161,6 +131,49 @@ int avr_open()
 	return fd;
 }
 
+int obd_read(int fd, char *buf)
+{
+	int valid_chars = 0;
+	char current_char;
+	
+	while((read(fd, &buf[valid_chars], 1) == 1) && (valid_chars < 50)) {
+		current_char = buf[valid_chars];
+		
+		if (current_char == '\r' || current_char == '\n') {
+			continue; // skip this character
+		} else if (current_char == '>') {
+			if (current_char == 0)
+				continue; // eat this carat if it's the first character
+			else
+				break;
+		} else {
+			valid_chars++;
+		}
+	}
+	
+	buf[valid_chars++] = '\0';
+	
+	tcflush(fd, TCIOFLUSH);
+	
+	return valid_chars;
+}
+
+bool obd_reset(int fd)
+{
+	char buf[50];
+	write(fd, "ATZ\r", 4);
+	
+	usleep(1000000);
+	
+	obd_read(fd, buf);
+	
+	if (strcmp(buf, "ELM327 v1.5") == 0)
+		return true;
+	else {
+		return false;
+	}
+}
+
 void obd_wait_until_on(int fd)
 {
 	int max_iter = 100;
@@ -182,10 +195,9 @@ void obd_wait_until_on(int fd)
 
 void obd_wait_until_echo(int fd, bool enable)
 {
-	int max_iter = 100;
+	int max_iter = 10;
 	char buf[50];
 	
-
 	for (int i = 0; i < max_iter; i++) 
 	{
 		write(fd, (enable ? "ATE1\r" : "ATE0\r"), 5);
@@ -197,17 +209,6 @@ void obd_wait_until_echo(int fd, bool enable)
 	}
 	printf("Echo was not set in an acceptable amount of time\n");
 	exit(EXIT_FAILURE);
-}
-
-bool obd_reset(int fd)
-{
-	char buf[50];
-	write(fd, "ATZ\r", 4);
-	usleep(1000000);
-	if (obd_read(fd, buf) >= 10)
-		return true;
-	else
-		return false;
 }
 
 bool obd_find_protocol(int fd)
@@ -251,6 +252,9 @@ long int *obd_get_bytes(int fd, size_t numbytes)
 	} else if(strstr(buf, "STOPPED") != NULL) {
 		fprintf(stderr, "OBD responded \"STOPPED\"\n");
 		byteptr = NULL;
+	} else if(strstr(buf, "UNABLE TO CONNECT") != NULL) {
+		fprintf(stderr, "OBD responded \"UNABLE TO CONNECT\", exiting.\n");
+		exit(EXIT_FAILURE);
 	} else {
 		byteptr = NULL;
 	}
@@ -395,44 +399,51 @@ int get_timing_adv(int fd) {
 	return timing_adv;
 }
 
-int main()
-{
-	int fd = obd_open();
-	//int avr_fd = avr_open();
-
-	struct AVRPacket packet = {0x0000, 0x00, 0x0000, 0x00, 0x00, 0x00, 0x00, 0x0000};
-	struct AVRPacket *data = &packet;
-
-	int RPM = 0;
-	int speed = 0;
-
-
-
-	printf("Resetting the chip...\n");
-	obd_reset(fd);
-
-	printf("Finding a protocol...\n");
-	obd_find_protocol(fd);
-
-	//clear IO buffers
-	tcflush(fd, TCIOFLUSH);
+void obd_setup(int fd) {
+	printf("Resetting the chip...");
+	
+	if(obd_reset(fd))
+		printf("Success\n");
+	else
+		printf("FAILURE\n");
 
 	//turn off echos
 	obd_wait_until_echo(fd, false);
 
 	//wait until the chip is working again
-	printf("Making sure chip is working...\n");
+	printf("Making sure chip is working...");
 	obd_wait_until_on(fd);
-
-	//ready to go
-	printf("OBD Ready\n");
-
+	printf("Success\n");
+	
 	//set the read to blocking
 	set_blocking(fd, 1);
+	
+	//ready to go
+	printf("OBD is ready\n");
+}
+
+void send_to_avr(int avr_fd, int speed, int RPM) {
+	struct AVRPacket packet = {0x0000, 0x00, 0x0000, 0x00, 0x00, 0x00, 0x00, 0x0000};
+	
+	packet.speed = speed;
+	packet.rpm = (RPM << 8) | (RPM >> 8);
+	
+	write(avr_fd, &packet, sizeof(packet));
+}
+
+int main()
+{
+	int fd = obd_open();
+	//int avr_fd = avr_open();
+
+	int RPM = 0;
+	int speed = 0;
+
+	obd_setup(fd);
 
 	printf("Beginning read cycle...\n");
 
-	while (1) 
+	while (true) 
 	{
 		usleep(10000);
 		RPM = get_rpm(fd);
@@ -443,10 +454,7 @@ int main()
 
 		if ((RPM != -1) && (speed != -1))
 		{
-			packet.speed = speed;
-			packet.rpm = (RPM << 8) | (RPM >> 8);
-
-			//write(avr_fd, data, sizeof(packet));
+			//send_to_avr(avr_fd, speed, RPM);
 			printf("RPM: %d\nSpeed: %d\n", RPM, speed);
 		}
 
