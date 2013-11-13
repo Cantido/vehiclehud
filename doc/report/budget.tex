@@ -5,36 +5,72 @@
 % Very brief discussion is appropriate here if you had significant cost
 % overruns or savings.
 
-\todo{Calculate budget}
+Table~\ref{tab:budget} itemizes the total budget for the project. A total of
+\$1223.35 was spent during development, however much of this is due to
+large bulk purchases of parts, and extra odds and ends kept by both members of
+the project team for later projects. Both of us were interested in having one
+of these systems for our own. This list is exhaustive, not representative of
+the cost of our final product.
 
-Table~\ref{tab:budget} itemizes the total budget for the project.
+Table~\ref{tab:product} itemizes the cost of the system. With a final cost
+of \$364.21, our system ends up under-budget by \$35.79.
 
 \begin{table}
 \centering
 \begin{tabular}{|l|l|l|l|}
 \hline
  & Items & Cost & Comments \\ \hline
-\multirow{8}{*}{Parts}
- & Main computer            & \$35  & Raspberry Pi \cite{raspifaq}         \\
- & OBD Comm. Chip           & \$??  & STN1110 OBD-to-UART \cite{stn1110ds} \\
- & USB to UART Chip         & \$??  & FT2232H USB-to-UART \cite{ft2232hds} \\
- & Display                  & \$??  & ? \\
- & Optics                   & \$??  & ? \\
- & Cables                   & \$??  & ? \\
- & Mounting enclosure       & \$??  & ? \\
- & PCBs                     & \$??  & ? \\ \hline
+\multirow{10}{*}{Parts}
+ & Main computer            & \$43.99  & Raspberry Pi \cite{raspifaq} \\
+ & Main PCB Manufacturing   & \$128.90 & Three copies ordered \\
+ & AVR Dev Kit              & \$19.95  & ATMega32U4 \cite{atmega32u4ds} \\
+ & Main PCB Parts           & \$287.52 & Parts bought in bulk \\
+ & PSU PCB Manufacturing    & \$97.70  & Three copies ordered \\
+ & PSU PCB Parts            & \$208.56 & Parts bought in bulk \\
+ & Display                  & \$105.84  & 2 128x64  VFD \\
+ & Optics                   & \$19.82  & 2 Prototype lenses \\
+ & Cables                   & \$13.85  & Assorted cables \\
+ & Mounting \& enclosures   & \$24.06  & 2 Adafruit Pi case \\ \hline
 \multirow{3}{*}{Equipment}
  & Power supply             & \$0   & Provided by students \\
  & Soldering iron           & \$0   & Provided by students \\
  & Laptops                  & \$0   & Provided by students \\ \hline
+\multirow{8}{*}{Development}
+ & OBD to BT adapter & \$19.80 & 2x ELM327 \\
+ & OLED Screen              & \$17.50 & 128x32 OLED \\
+ & Manufacturer HUDs        & \$31.78 & Pontiac HUD \\
+ & Platform boards          & \$63.99 & pcDuino \\
+ & Small monitor for RasPi  & \$77.39 & PYLE MobVi monitor \\
+ & SD Card Reader           & \$11.99 & USB Card Reader \\
+ & USB WiFi Module          & \$19.90 & For RasPi \\
+ & SD Card                  & \$10.99 & Class 10 SD card \\
 \multirow{2}{*}{Software}
  & Schematic capture        & \$0   & Freeware \\
  & Programming tools        & \$0   & Freeware \\ \hline
 
-& \textbf{Total}    & \textbf{\$ ?? } & \\ \hline
+& \textbf{Total}    & \textbf{\$1223.35 } & \\ \hline
 & \textbf{Expected} & \textbf{\$400 } & \\ \hline
-& \textbf{Overrun} &  \textbf{\$ ?? } & \\ \hline
+& \textbf{Overrun} &  \textbf{\$823.35 } & \\ \hline
 \end{tabular}
-\caption{Estimated Budget}
+\caption{Exhaustive Budget}
 \label{tab:budget}
+\end{table}
+
+\begin{table}
+\centering
+\begin{tabular}{|l|l|l|l|}
+\hline
+ & Items & Cost & Comments \\ \hline
+\multirow{5}{*}{Parts}
+ & Main computer & \$52.98  & RasPi Model B w/ case \\
+ & Main PCB      & \$137.42 & Manufacturing + parts \\
+ & PSU PCB       & \$101.07 & Manufacturing + parts \\
+ & VFD           & \$52.92  & Noritake VFD \\
+ & Optics        & \$19.82  & Lenses \\ \hline
+& \textbf{Total}    & \textbf{\$364.21 } & \\ \hline
+& \textbf{Expected} & \textbf{\$400 } & \\ \hline
+& \textbf{Underrun} &  \textbf{\$35.79 } & \\ \hline
+\end{tabular}
+\caption{Cost of a single system}
+\label{tab:product}
 \end{table}
