@@ -1,0 +1,29 @@
+﻿#! /bin/sh
+# /etc/init.d/vhudd
+
+### BEGIN INIT INFO
+# Provides:          vhudd
+# Required-Start:    $local_fs
+# Required-Stop:     $local_fs
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Starts and stops the VehicleHUD daemon for the RasPi
+# Description:       Starts and stops the VehicleHUD daemon for the RasPi
+### END INIT INFO
+
+case "$1" in
+  start)
+    echo "Starting the VehicleHUD daemon"
+    /home/pi/vehiclehud/src/vhudpi
+    ;;
+  stop)
+    echo "Stopping the VehicleHUD daemon"
+    killall vhudpi
+    ;;
+  *)
+    echo "Usage: /etc/init.d/vhudd {start|stop}"
+    exit 1
+    ;;
+esac
+
+exit 0
