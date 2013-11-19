@@ -9,10 +9,13 @@
 #include <time.h>
 #include <stdint.h>
 
-//#define OBD_PORT "/dev/ttyUSB1"  // for the USB ELM327
+#define OBD_PORT "/dev/ttyUSB2"  // for the USB ELM327
 //#define OBD_PORT "/dev/rfcomm0"  // for the Bluetooth ELM327
-#define OBD_PORT "/dev/ttyS3"	// for Cygwin on Windows
+//#define OBD_PORT "/dev/ttyS3"	// for Cygwin on Windows
+
 #define AVR_PORT "/dev/ttyUSB1"
+
+
 #define TIMEOUT 500000
 #define MAX_CHARS 50
 
@@ -28,7 +31,7 @@ struct AVRPacket {
 	uint8_t eLoad;		//byte 7
 	uint8_t eTemp;		//byte 8
 	uint16_t maf;		//byte 9, byte 10
-	//uint8_t               tAdv;   //byte 11
+	uint8_t tAdv;   //byte 11
 } __attribute((packed)) __;
 
 int set_interface_attribs(int fd, int speed, int parity)
@@ -123,7 +126,7 @@ int avr_open()
 		exit(EXIT_FAILURE);
 	}
 
-	set_interface_attribs(fd, B38400, 0);	// set speed to 38,400 bps, 8n1 (no parity)
+	set_interface_attribs(fd, B1000000, 0);
 	set_blocking(fd, 0);	// set no blocking
 
 	return fd;
@@ -149,7 +152,7 @@ int obd_read(int fd, char *buf)
 		}
 	}
 
-	buf[valid_chars++] = '\0';
+	buf[valid_chars] = '\0';
 
 	tcflush(fd, TCIOFLUSH);
 
@@ -268,7 +271,7 @@ int get_rpm(int fd)
 		rpm = -1;
 	} else {
 
-		rpm = ((data[0] * 256) + data[1]) / 4;
+		rpm = ((data[2] * 256) + data[3]) / 4;
 		free(data);
 	}
 
@@ -286,7 +289,7 @@ int get_speed(int fd)
 	if (data == NULL) {
 		speed = -1;
 	} else {
-		speed = (int)data[0];
+		speed = (int)data[2];
 		free(data);
 	}
 	return speed;
@@ -304,7 +307,7 @@ int get_throttle(int fd)
 	if (data == NULL) {
 		throttle = -1;
 	} else {
-		throttle = (int)data[0] * 100 / 255;
+		throttle = (int)data[2] * 100 / 255;
 		free(data);
 	}
 	return throttle;
@@ -322,7 +325,7 @@ int get_intake_temp(int fd)
 	if (data == NULL) {
 		intake_temp = -1;
 	} else {
-		intake_temp = (int)data[0] - 40;
+		intake_temp = (int)data[2] - 40;
 		free(data);
 	}
 	return intake_temp;
@@ -340,7 +343,7 @@ int get_engine_load(int fd)
 	if (data == NULL) {
 		engine_load = -1;
 	} else {
-		engine_load = (int)data[0] * 100 / 255;
+		engine_load = (int)data[2] * 100 / 255;
 		free(data);
 	}
 	return engine_load;
@@ -358,7 +361,7 @@ int get_engine_temp(int fd)
 	if (data == NULL) {
 		engine_temp = -1;
 	} else {
-		engine_temp = (int)data[0] - 40;
+		engine_temp = (int)data[2] - 40;
 		free(data);
 	}
 	return engine_temp;
@@ -376,7 +379,7 @@ int get_maf(int fd)
 	if (data == NULL) {
 		maf = -1;
 	} else {
-		maf = (int)data[0] / 100;
+		maf = (int)data[2] / 100;
 		free(data);
 	}
 	return maf;
@@ -394,7 +397,7 @@ int get_timing_adv(int fd)
 	if (data == NULL) {
 		timing_adv = -1;
 	} else {
-		timing_adv = (int)data[0] / 2 - 64;
+		timing_adv = (int)data[2] / 2 - 64;
 		free(data);
 	}
 	return timing_adv;
@@ -427,7 +430,7 @@ void obd_setup(int fd)
 void send_to_avr(int avr_fd, int speed, int RPM)
 {
 	struct AVRPacket packet =
-	    { 0x0000, 0x00, 0x0000, 0x00, 0x00, 0x00, 0x00, 0x0000 };
+	    { 0x0000, 0x00, 0x0000, 0x00, 0x00, 0x00, 0x00, 0x0000, 0x00 };
 
 	packet.speed = speed;
 	packet.rpm = (RPM << 8) | (RPM >> 8);
@@ -438,7 +441,7 @@ void send_to_avr(int avr_fd, int speed, int RPM)
 int main()
 {
 	int fd = obd_open();
-	//int avr_fd = avr_open();
+	int avr_fd = avr_open();
 
 	int RPM = 0;
 	int speed = 0;
@@ -455,7 +458,7 @@ int main()
 		speed = get_speed(fd);
 
 		if ((RPM != -1) && (speed != -1)) {
-			//send_to_avr(avr_fd, speed, RPM);
+			send_to_avr(avr_fd, speed, RPM);
 			printf("RPM: %d\nSpeed: %d\n", RPM, speed);
 		}
 		//flush buffers just in case
