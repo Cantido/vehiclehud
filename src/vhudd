@@ -14,7 +14,7 @@
 case "$1" in
   start)
     echo "Starting the VehicleHUD daemon"
-    /home/pi/vehiclehud/src/vhudpi
+    /home/pi/vehiclehud/src/vhudpi &
     ;;
   stop)
     echo "Stopping the VehicleHUD daemon"
