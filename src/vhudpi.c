@@ -9,6 +9,8 @@
 #include <time.h>
 #include <stdint.h>
 
+#include "avr.h"
+
 #define OBD_PORT "/dev/ttyUSB2"  // for the USB ELM327
 //#define OBD_PORT "/dev/rfcomm0"  // for the Bluetooth ELM327
 //#define OBD_PORT "/dev/ttyS3"	// for Cygwin on Windows
@@ -22,17 +24,6 @@
 #define DISABLE 0
 #define ENABLE 1
 
-struct AVRPacket {
-	uint16_t header;	//byte 0, byte 1
-	uint8_t speed;		//byte 2
-	uint16_t rpm;		//byte 3, byte 4
-	uint8_t tPos;		//byte 5
-	uint8_t iTemp;		//byte 6
-	uint8_t eLoad;		//byte 7
-	uint8_t eTemp;		//byte 8
-	uint16_t maf;		//byte 9, byte 10
-	uint8_t tAdv;   //byte 11
-} __attribute((packed)) __;
 
 int set_interface_attribs(int fd, int speed, int parity)
 {
@@ -112,21 +103,6 @@ int obd_open()
 	}
 
 	set_interface_attribs(fd, B38400, 0);	// set speed to 38,400 bps, 8n1 (no parity)
-	set_blocking(fd, 0);	// set no blocking
-
-	return fd;
-}
-
-int avr_open()
-{
-	int fd = open(AVR_PORT, O_RDWR | O_NOCTTY | O_SYNC);
-	if (fd < 0) {
-		printf("error %s opening %s: %s", strerror(errno), AVR_PORT,
-		       strerror(errno));
-		exit(EXIT_FAILURE);
-	}
-
-	set_interface_attribs(fd, B1000000, 0);
 	set_blocking(fd, 0);	// set no blocking
 
 	return fd;
@@ -427,21 +403,10 @@ void obd_setup(int fd)
 	printf("OBD is ready\n");
 }
 
-void send_to_avr(int avr_fd, int speed, int RPM)
-{
-	struct AVRPacket packet =
-	    { 0x0000, 0x00, 0x0000, 0x00, 0x00, 0x00, 0x00, 0x0000, 0x00 };
-
-	packet.speed = speed;
-	packet.rpm = (RPM << 8) | (RPM >> 8);
-
-	write(avr_fd, &packet, sizeof(packet));
-}
-
 int main()
 {
 	int fd = obd_open();
-	int avr_fd = avr_open();
+	int avr_fd = avr_open(AVR_PORT);
 
 	int RPM = 0;
 	int speed = 0;

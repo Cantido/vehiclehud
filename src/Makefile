@@ -2,8 +2,10 @@ CFLAGS += -std=gnu99 -Wall
 
 all: vhudpi avrtest
 
-vhudpi: vhudpi.c
-avrtest: avrtest.c
+avr.o: avr.h
+
+vhudpi: vhudpi.c avr.o
+avrtest: avrtest.c avr.o
 
 install: vhudpi
 	mv vhudd /etc/init.d/vhudd
