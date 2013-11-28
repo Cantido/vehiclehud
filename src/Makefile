@@ -3,8 +3,9 @@ CFLAGS += -std=gnu99 -Wall
 all: vhudpi avrtest
 
 avr.o: avr.h
+obd.o: obd.h
 
-vhudpi: vhudpi.c avr.o
+vhudpi: vhudpi.c avr.o obd.o
 avrtest: avrtest.c avr.o
 
 install: vhudpi
