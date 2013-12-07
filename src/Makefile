@@ -22,4 +22,4 @@ format: $(src)
 	indent -linux *.c
 	
 clean:
-	rm -rf *.exe *~
+	rm -rf *.exe *~ *.o
