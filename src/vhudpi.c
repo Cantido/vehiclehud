@@ -18,6 +18,8 @@
 
 #define AVR_PORT "/dev/ttyUSB1"
 
+#define TIMING_LOG "timing.txt"
+
 void obd_setup(int fd)
 {
 	printf("Resetting the chip...");
@@ -42,23 +44,36 @@ void obd_setup(int fd)
 	printf("OBD is ready\n");
 }
 
+FILE *open_timing_log() {
+	return fopen(TIMING_LOG, "w");
+}
+
+void log_time(FILE *fp, time_t request_time) {
+	fprintf(fp, "%d\n", (int) request_time);
+}
+
 int main()
 {
 	int fd = obd_open(OBD_PORT);
 	int avr_fd = avr_open(AVR_PORT);
+	FILE* timelog = open_timing_log();
 
 	int RPM = 0;
 	int speed = 0;
+	
+	time_t start, end;
 
 	obd_setup(fd);
 
 	printf("Beginning read cycle...\n");
 
 	while (true) {
-		usleep(10000);
+		
+		start = time(0);
 		RPM = get_rpm(fd);
-
-		usleep(20000);
+		end = time(0);
+		log_time(timelog, end - start);
+		
 		speed = get_speed(fd);
 
 		if ((RPM != -1) && (speed != -1)) {
