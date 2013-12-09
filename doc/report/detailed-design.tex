@@ -22,7 +22,7 @@ Due to the volatile nature of automotive electrical systems, an exceptionally st
 resilient power supply is required for this project.  Despite being ``12 volt''
 systems, most automotive circuits run at close to 14 volts to charge the 12
 volt battery.  However, during high-load conditions such as cold-cranking or
-jumpstarting, voltages may be as low as 4.5 volts.  In severe case, voltages
+jumpstarting, voltages may be as low as 4.5 volts.  In severe cases, voltages
 may swing from $-100$ to $+100$ volts.  For these reasons, the power supply used
 employs a number of protection techniques and switching regulators to provide
 safe, consistent power to the remaining circuitry.
@@ -124,3 +124,33 @@ Source code for the system (as well as source code for this report) can be
 found at \url{https://github.com/Cantido/vehiclehud}.
 
 \missingfigure{Insert software diagram}
+
+\section{Optics}
+\subsection{Main Display}
+For the main display, a vacuum fluorescent display (VFD) was chosen.  VFDs offer
+extreme brightness, suitable for a system that will be used in daylight.  The
+one chosen for this project was made by Noritake and offers 128x64 pixels.  
+While this resolution is not fantastic, it does provide the ability to make a
+nice, clean display.  The AVR microcontroller on the main board communicates 
+with the VFD via a proprietary serial interface.  Noritake provides a C$++$ 
+library for use with ARVs.
+
+\subsection{Focusing Mirror}
+As mentioned previously, in order for this project to be a true "heads-up" 
+display, the image must be focused at infinity.  To accomplish this, a 
+parabolic reflector was used.  Parabolic reflectors are often used in solar
+collectors; light from the sun is reflected off the parabolic surface and
+focused at the focal point of the parabola.  This process works in reverse 
+as well: if the display is placed at the focal point of the parabola, the
+light from the display will be collimated (all rays made parallel) thus
+focusing the image at infinity.  Once reflected onto the windshield, the
+display's image will appear to be at inifnity.
+
+To created a parabolic mirror, a base was made from laser-cut acrylic "slices".
+These slices were bolted together and covered with a mirror-coated film.  While
+this did create a mirror that would focus the image at inifity, it was rather
+"rough around the edges" both literally and figuratively.  The edges of the mirror
+were not perfect and created some distorion.  A model of the acrylic slices is 
+shown in FIGURE.
+
+\missingfigure{mirror render}
