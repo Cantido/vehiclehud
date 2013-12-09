@@ -8,4 +8,79 @@
 % rushed, did your original chart give too much time for one aspect, were some
 % tasks crashed or done in parallel, etc.
 
-\todo{Write Timeline and Deliverables}
+\section{Spring 2013}
+
+Through the spring semester of 2013, we solidified the goals of our project and
+began some preliminary research to guide the major choices we would have to
+make.
+
+\subsection{Deliverables Promised}
+
+Our proposal, released at the end of the spring semester of 2013 
+\cite{proposal}, laid out the requirements for our final product:
+
+\begin{quote}
+Our final product will be a system that can provide a Heads-Up Display to the
+driver of most automobiles. This product will consist of an OBD plug to gather
+vehicle data from the car, a system to display this information (such as a
+dash-mounted projector), and a central computer.
+\end{quote}
+
+We did not deviate from this goal through the course of the project.
+
+\section{Summer 2013}
+
+The summer months were blocked out for development of the PSU and the research
+of everything else. Aaron designed the PSU and tore apart some manufaturer HUD
+systems, and Bobby researched OBD and wrote some prototype code.
+
+We had also marked this time to research our options with regard to
+implementing GPS, and we found out this would be a lot more difficult than
+we anticipated, due to the restrictions Google places on their Maps API.
+We did not yet decide to scrap a GPS system entirely, but it took a
+back seat to other components.
+
+\section{Fall 2013}
+
+A majority of the work was done during the fall semester of 2013. This was also
+when our progess was documented with biweekly progress reports.
+
+\subsection{September}
+
+At the beginning of September, the power supply unit was already back from the
+manufacturer. After the board was finished and tested, Aaron started to design
+the main board. The main board was sent out for manufacturing near the end
+of this month.
+
+During this period, Bobby was setting up the Raspberry Pi for development, and
+experimenting with the software. The decision was made to prototype in Python
+at this time, and a completely functional implementation of the system was written.
+
+\subsection{October}
+
+We ran into our biggest roadblock during the month of October while we waited
+for the main board to be sent back from the manufacturer. We took this time to
+move the Python code base into C, test other
+operating systems for the Raspberry Pi, and test boot times on a higher-class
+SD card, all for potential speed gains. Much of our time was also spent writing
+this final report.
+
+We took this opportunity to look back into implementing a navigation or GPS
+system, and deeper investigation showed that it would not be possible to use
+Google APIs for navigation. This optional goal was scrapped.
+
+\subsection{November}
+
+Once the main PCB arrived, we could begin testing the system as a whole.
+During this time the optical system was prototyped and tested, and we
+continued to optimize the software. Near the end of the month, the system was
+complete.
+
+We were able to have a working system to demonstrate to our advisor on the 20th,
+and any small problems with the system were cleaned up.
+
+\section{Product Delivered}
+
+At the end of November 2013, the major goals of the project were met. The system
+functioned as promised and met all criteria set by us during the spring.
+
