@@ -17,7 +17,7 @@
 % semester, while recognizing that some elements will be subject to change or
 % impossible to write up until the final project is completed.
 
-\section{PSU}
+\section{Power Supply Unit}
 Due to the volatile nature of automotive electrical systems, an exceptionally stable and 
 resilient power supply is required for this project.  As mentioned previously, large
 transient voltages are not uncommon in automotive environments, so the electronics must
@@ -27,7 +27,7 @@ power to the remaining circuitry.
 
 The input stage of the power supply provides over-, under-, and reverse-voltage
 protection.  A control chip from Linear Technology \cite{ltc4365ds} is used to drive two pass
-FETs if the supply voltage is between 3.5 and 18 volts.  If the supply voltage
+field-effect transistors (FETs) if the supply voltage is between 3.5 and 18 volts.  If the supply voltage
 is outside this range, the FETs are turned off and the circuitry is
 protected.  Large transient-voltage-suppression (TVS) diodes are also present to
 protect against severe ($\pm 100$V) transients.  The output of this stage includes
@@ -64,7 +64,7 @@ provide an interface to the vehicle, receive data from the Raspberry Pi and
 display that data to the VFD.  External inputs are also provided for future 
 development.  The main board was designed as a 4-layer PCB.
 
-\subsection{AVR}
+\subsection{Microcontroller}
 An Atmel AVR ATmega32U4 \cite{atmega32u4ds} was chosen as the microcontroller to drive the VFD.  This
 controller provides sufficient memory and processing power to handle this task. 
 It is also used to handle switch inputs for changing brightness, display modes,
@@ -122,7 +122,7 @@ from the OBD subsystem on the main board, and pushes that data to the AVR
 subsystem. The microcontroller in the AVR subsystem then displays that data
 on the display.
 
-The Raspberry Pi is nigh-useless in the final implementation of the system, and
+The Raspberry Pi is almost useless in the final implementation of the system, and
 could be removed for a main board that could control both subsystems from its
 microcontoller. The Pi could also be used as a platform for other improvements.
 
@@ -140,7 +140,7 @@ with the VFD via a proprietary serial interface.  Noritake provides a C$++$
 library for use with ARVs.
 
 \subsection{Focusing Mirror}
-As mentioned previously, in order for this project to be a true ``heads-up'' 
+In order for this project to be a true ``heads-up'' 
 display, the image must be focused at infinity.  To accomplish this, a 
 parabolic reflector was used.  Parabolic reflectors are often used in solar
 collectors; light from the sun is reflected off the parabolic surface and
@@ -150,11 +150,11 @@ light from the display will be collimated (all rays made parallel) thus
 focusing the image at infinity.  Once reflected onto the windshield, the
 display's image will appear to be at inifnity.
 
-To created a parabolic mirror, a base was made from laser-cut acrylic slices.
+To create a parabolic mirror, a base was made from laser-cut acrylic slices.
 These slices were bolted together and covered with a mirror-coated film.  While
 this did create a mirror that would focus the image at inifity, it was rather
 rough around the edges, both literally and figuratively.  The edges of the mirror
-were not perfect and created some distorion.  A model of the acrylic slices is 
+were not perfect and created some distorion.  A model of the mirror assembly is 
 shown in figure~\ref{fig:mirror-render}.
 
 \begin{figure}[h]

@@ -12,8 +12,8 @@
 
 \section{Introduction}
 
-How well the HUD system works overall is a qualitative judgement, for the most
-part, and we decided the system was complete when we could drive around with it.
+How well the HUD system works overall is a qualitative judgement. We decided the system
+was complete when we could drive around with it.
 However, we did have some requirements on performance for the power suppy unit, as well
 as for the OBD subsystem.
 
@@ -33,12 +33,37 @@ due to decreased power draw and heat generation.  With approximately 60\% loads 
 each rail, the entire board is close to 90\% efficient.  This was achieved with a 
 careful PCB layout and efficient switching regulator ICs.
 
-\section{OBD}
+\section{On-Board Diagnostics Interface}
 
 The refresh rate of vehicle data on the display is our core measurement of
 performance for this subsystem. Overall, it seems that we can request a value
 from the vehicle and place it on the display in around 100 milliseconds. This
-is fast enough to seem as responsive as the vehicle's needles.
+is fast enough to seem as responsive as the vehicle's needles. Response times
+vary depending on the internal protocol of the vehicle's electronics system, but
+qualitatively the difference was not severe.
 
-However, response times vary depending on the internal protocol of the vehicle's
-electronics system.
+\section{Overall System Usability}
+
+The system functons well overall. The VFD was very bright and clear, and only
+in direct sunlight was it at all difficult to see. Figure~\ref{fig:display-day}
+shows the display during the day, and figure~\ref{fig:display-night} shows
+the display at night.
+
+\begin{figure}[h]
+\includegraphics[width=\textwidth]{img/display_day.png}
+\caption{The display during the day}
+\label{fig:display-day}
+\end{figure}
+
+\begin{figure}[h]
+\includegraphics[width=\textwidth]{img/display_night.jpg}
+\caption{The display at night}
+\label{fig:display-night}
+\end{figure}
+
+Some videos of the functional system can be found on Youtube:
+
+\begin{description}
+\item[VFD only]\url{http://youtu.be/Lh0EtPrTeFc}
+\item[Road test] \url{http://youtu.be/hr66TgOQNoI}
+\end{description}
