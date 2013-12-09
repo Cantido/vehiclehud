@@ -37,7 +37,7 @@ The second portion of the power supply includes a dual buck switching regulator
 to provide 3.3V and 5V at 3A apiece.  This portion of the supply must support 
 the highest loads during normal operation.  The Raspberry Pi, AVR 
 microcontroller, and vacuum-fluorescent display are all powered from 5V and 
-require up 2A.  The USB-to-UART \cite{ft2232hds} and OBD-to-UART \cite{stn1110ds} converters both use 3.3V at 
+require up to 2A.  The USB-to-UART \cite{ft2232hds} and OBD-to-UART \cite{stn1110ds} converters both use 3.3V at 
 close to 500mA.  A buck topology was chosen since the supply voltage will be
 above 5V except during severe brown-out conditions.
 
@@ -137,7 +137,7 @@ one chosen for this project was made by Noritake and offers 128x64 pixels.
 While this resolution is not fantastic, it does provide the ability to make a
 nice, clean display.  The AVR microcontroller on the main board communicates 
 with the VFD via a proprietary serial interface.  Noritake provides a C$++$ 
-library for use with ARVs.
+library for use with AVRs.
 
 \subsection{Focusing Mirror}
 In order for this project to be a true ``heads-up'' 
