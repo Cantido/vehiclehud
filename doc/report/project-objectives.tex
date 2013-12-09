@@ -36,6 +36,12 @@ are parallel, also called ``focused at infinity.'' This is done to avoid
 causing eye strain due to the user focusing back and forth between the
 environment and the display. Our system performs this task.
 
-\section{Design for an Automotive Environment}
+\section{Designing for an Automotive Environment}
 
-\todo{Write this section}
+Despite being ``12 volt'' systems, most automotive circuits run at close to 
+14 volts to charge the 12 volt battery. However, during high-load conditions 
+such as cold-cranking or jumpstarting, voltages may be as low as 4.5 volts.  
+In severe cases, voltages may swing from $-100$ to $+100$ volts. For these 
+reasons, the electronics in the system must designed to withstand these severe
+transient conditions. Most of this protection will be done with the power supply
+unit (PSU).
