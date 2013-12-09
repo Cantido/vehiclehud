@@ -62,7 +62,11 @@ The power supply was
 designed as a 4-layer PCB, of which most layers are grounded in order to provide 
 heat-sinking and shielding from high-frequency switching signals.
 
-\missingfigure{Insert figure of PSU}
+\begin{figure}[h]
+\includegraphics[width=\textwidth]{img/psu_render_top.jpg}
+\caption{Top of the PSU board}
+\label{fig:psu render}
+\end{figure}
 
 \section{Main Board}
 The main board handles all functions not performed by the Raspberry Pi.  It will
@@ -94,7 +98,11 @@ with via C and provide an easy communication method.  The chip supports UART bau
 rates up to 1MBaud, which is sufficiently fast for all operations in this project.
 A datasheet for this device is available at \cite{ft2232hds}.
 
-\missingfigure{Insert figure of main board}
+\begin{figure}[h]
+\includegraphics[width=\textwidth]{img/main_render_top.jpg}
+\caption{Top of the main board}
+\label{fig:main render}
+\end{figure}
 
 \section{Raspberry Pi}
 \label{sec:raspi-design}
@@ -112,7 +120,6 @@ system, not on wrestling with an obscure operating system. We prioritized ease
 of development.
 
 \section{Software}
-\todo{Discuss C code}
 The software for the system was prototyped in Python 2.7.5, and then finally
 implemented in C$++$. Python was chosen
 because it is the language of choice for the Raspberry Pi, and allows us to
@@ -120,10 +127,17 @@ quickly and easily develop the high-level system software. Version 2.7.5 was
 chosen for compatibility with the PySerial library, which the software uses to
 communicate over USB.
 
+The code that runs on the Raspberry Pi is very simple. It pulls speed and RPM
+from the OBD subsystem on the main board, and pushes that data to the AVR
+subsystem. The microcontroller in the AVR subsystem then displays that data
+on the display.
+
+The Raspberry Pi is nigh-useless in the final implementation of the system, and
+could be removed for a main board that could control both subsystems from its
+microcontoller. The Pi could also be used as a platform for other improvements.
+
 Source code for the system (as well as source code for this report) can be
 found at \url{https://github.com/Cantido/vehiclehud}.
-
-\missingfigure{Insert software diagram}
 
 \section{Optics}
 \subsection{Main Display}
@@ -136,7 +150,7 @@ with the VFD via a proprietary serial interface.  Noritake provides a C$++$
 library for use with ARVs.
 
 \subsection{Focusing Mirror}
-As mentioned previously, in order for this project to be a true "heads-up" 
+As mentioned previously, in order for this project to be a true ``heads-up'' 
 display, the image must be focused at infinity.  To accomplish this, a 
 parabolic reflector was used.  Parabolic reflectors are often used in solar
 collectors; light from the sun is reflected off the parabolic surface and
@@ -146,11 +160,15 @@ light from the display will be collimated (all rays made parallel) thus
 focusing the image at infinity.  Once reflected onto the windshield, the
 display's image will appear to be at inifnity.
 
-To created a parabolic mirror, a base was made from laser-cut acrylic "slices".
+To created a parabolic mirror, a base was made from laser-cut acrylic slices.
 These slices were bolted together and covered with a mirror-coated film.  While
 this did create a mirror that would focus the image at inifity, it was rather
-"rough around the edges" both literally and figuratively.  The edges of the mirror
+rough around the edges, both literally and figuratively.  The edges of the mirror
 were not perfect and created some distorion.  A model of the acrylic slices is 
-shown in FIGURE.
+shown in figure~\ref{fig:mirror-render}.
 
-\missingfigure{mirror render}
+\begin{figure}[h]
+\includegraphics[width=\textwidth]{img/mirror_render.jpg}
+\caption{Construction of the focusing mirror}
+\label{fig:mirror-render}
+\end{figure}
