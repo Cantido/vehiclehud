@@ -19,13 +19,11 @@
 
 \section{PSU}
 Due to the volatile nature of automotive electrical systems, an exceptionally stable and 
-resilient power supply is required for this project.  Despite being ``12 volt''
-systems, most automotive circuits run at close to 14 volts to charge the 12
-volt battery.  However, during high-load conditions such as cold-cranking or
-jumpstarting, voltages may be as low as 4.5 volts.  In severe cases, voltages
-may swing from $-100$ to $+100$ volts.  For these reasons, the power supply used
-employs a number of protection techniques and switching regulators to provide
-safe, consistent power to the remaining circuitry.
+resilient power supply is required for this project.  As mentioned previously, large
+transient voltages are not uncommon in automotive environments, so the electronics must
+be designed to survive such conditions.  For these reasons, the power supply employs 
+a number of protection techniques and switching regulators to provide safe, consistent 
+power to the remaining circuitry.
 
 The input stage of the power supply provides over-, under-, and reverse-voltage
 protection.  A control chip from Linear Technology \cite{ltc4365ds} is used to drive two pass
