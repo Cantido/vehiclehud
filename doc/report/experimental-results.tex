@@ -21,11 +21,17 @@ as for the OBD subsystem.
 
 The main requirement for the power supply was that it needed to handle transient 
 situations and protect the rest of the system.  The power supply was able to survive
-cold-cranking situations which see input voltages as low as 4.5V.  It was also tested
+cold-cranking which sees input voltages as low as 4.5V.  It was also tested
 over its entire supply range (3.5 to 18 volts) and worked over all voltages.  The PSU
-also shutdown as designed when the input voltage was outside of this range.
+also shutdown as designed when the input voltage was outside of this range.  The 
+testing of severe transient conditions (\pm 100V) requires special equipment that was
+not available to us and thus we were able to completely verify protection in these
+situations.
 
-While not 
+While not a requirement of the project, a high-efficiency power supply is advantageous 
+due to decreased power draw and heat generation.  With approximately 60\% loads on 
+each rail, the entire board is close to 90\% efficient.  This was achieved with a 
+careful PCB layout and efficient switching regulator ICs.
 
 \section{OBD}
 
